@@ -236,8 +236,12 @@ body {
   animation: ghost-float 3s ease-in-out infinite;
 }
 
+.state-appear #char-ghost .char-body {
+  animation: ghost-appear 0.8s ease-out;
+}
+
 .state-greet #char-ghost .char-body {
-  animation: ghost-greet 0.8s ease-out;
+  animation: ghost-greet 0.7s ease-out;
 }
 
 .state-working #char-ghost .char-body {
@@ -270,7 +274,10 @@ body {
   }
 }
 
-@keyframes ghost-greet {
+/* One-time pop-in for when the character first appears on screen (app
+   launch only) — everywhere else it's already fully visible, so a
+   fade-and-scale-up entrance would look like it's popping out of nowhere. */
+@keyframes ghost-appear {
   0% {
     transform: scale(0.7) translateY(16px);
     opacity: 0.4;
@@ -282,6 +289,22 @@ body {
   100% {
     transform: scale(1) translateY(0);
     opacity: 1;
+  }
+}
+
+/* Repeatable "hello" (real SessionStart, character switch, cursor
+   shake): a friendly bounce with no fade/scale-from-tiny, since the
+   character's already fully visible when this fires. */
+@keyframes ghost-greet {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  40% {
+    transform: scale(1.1) translateY(-6px);
+  }
+  70% {
+    transform: scale(0.97) translateY(1px);
   }
 }
 
@@ -388,8 +411,12 @@ body {
   animation: bunny-breathe 2.6s ease-in-out infinite;
 }
 
+.state-appear #char-bunny .char-body {
+  animation: bunny-appear 0.6s ease-out;
+}
+
 .state-greet #char-bunny .char-body {
-  animation: bunny-greet 0.6s ease-out;
+  animation: bunny-greet 0.5s ease-out;
 }
 
 .state-working #char-bunny .char-body {
@@ -422,7 +449,8 @@ body {
   }
 }
 
-@keyframes bunny-greet {
+/* One-time pop-in for app launch only. */
+@keyframes bunny-appear {
   0% {
     transform: scale(0.6) rotate(-4deg);
   }
@@ -434,6 +462,21 @@ body {
   }
   100% {
     transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Repeatable "hello": a small nod, no scale-from-tiny, since the ear
+   wave (below) already carries most of the greeting. */
+@keyframes bunny-greet {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  35% {
+    transform: scale(1.04) translateY(-3px);
+  }
+  65% {
+    transform: scale(0.99) translateY(0.5px);
   }
 }
 
