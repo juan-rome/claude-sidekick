@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const store = require('./lib/store');
 const { startHookServer, DEFAULT_PORT } = require('./lib/hookServer');
+const { REACTION_HOLD_MS } = require('./lib/hookState');
 
 let tray;
 let sidekickWindow;
@@ -64,6 +65,19 @@ function createSidekickWindow() {
 
   sidekickWindow.webContents.on('did-finish-load', () => {
     sidekickWindow.webContents.send('sidekick:character', getCharacter());
+    // A little hello once the character's actually on screen, independent
+    // of any real Claude Code session starting. Sent directly rather than
+    // through the hook server, so it settles itself back to idle here too.
+    setTimeout(() => {
+      if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+        sidekickWindow.webContents.send('sidekick:state', 'greet');
+        setTimeout(() => {
+          if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+            sidekickWindow.webContents.send('sidekick:state', 'idle');
+          }
+        }, REACTION_HOLD_MS);
+      }
+    }, 400);
   });
 
   sidekickWindow.on('moved', () => {

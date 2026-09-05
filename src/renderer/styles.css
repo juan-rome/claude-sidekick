@@ -223,41 +223,133 @@ body {
   }
 }
 
-/* ================= Ghost & Bunny: shared body motion ================= */
-/* The positioning transform lives on the parent <g>; .char-body carries no
-   static transform of its own, so these CSS animations can freely drive
-   its transform without fighting the SVG attribute transform above it. */
-#char-ghost .char-body,
-#char-bunny .char-body {
-  animation: breathe 3s ease-in-out infinite;
+/* ================================================================
+   Ghost & Bunny each get their own motion language rather than
+   sharing blob's keyframes: ghost grows/shrinks and floats/drifts
+   (it has no limbs or ears to act with), bunny acts mainly through
+   its ears (perk, flatten, droop) plus opposite-direction eye moves
+   (squints happy, widens when startled).
+   ================================================================ */
+
+/* ---------------------------- Ghost ---------------------------- */
+#char-ghost .char-body {
+  animation: ghost-float 3s ease-in-out infinite;
 }
 
-.state-greet #char-ghost .char-body,
-.state-greet #char-bunny .char-body {
-  animation: greet-bounce 0.7s ease-out;
+.state-greet #char-ghost .char-body {
+  animation: ghost-greet 0.8s ease-out;
 }
 
-.state-working #char-ghost .char-body,
-.state-working #char-bunny .char-body {
-  animation: work-jiggle 0.9s ease-in-out infinite;
+.state-working #char-ghost .char-body {
+  animation: ghost-drift 1.3s ease-in-out infinite;
 }
 
-.state-success #char-ghost .char-body,
-.state-success #char-bunny .char-body {
-  animation: success-bounce 0.6s ease-out;
+.state-success #char-ghost .char-body {
+  animation: ghost-pop 0.5s ease-out;
 }
 
-.state-error #char-ghost .char-body,
-.state-error #char-bunny .char-body {
-  animation: error-shake 0.5s ease-in-out;
+.state-error #char-ghost .char-body {
+  animation: ghost-flinch 0.5s ease-in-out;
 }
 
-.state-goodbye #char-ghost .char-body,
-.state-goodbye #char-bunny .char-body {
-  animation: goodbye-settle 1.2s ease-in forwards;
+.state-goodbye #char-ghost .char-body {
+  animation: ghost-fade-away 1.2s ease-in forwards;
 }
 
-/* ---- Ghost expressions ---- */
+.state-poke #char-ghost .char-body {
+  animation: ghost-giggle 0.6s ease-in-out;
+}
+
+@keyframes ghost-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes ghost-greet {
+  0% {
+    transform: scale(0.7) translateY(16px);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.12) translateY(-5px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes ghost-drift {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-6px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(6px) rotate(3deg);
+  }
+}
+
+@keyframes ghost-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes ghost-flinch {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  30% {
+    transform: translateX(-5px) scale(0.92);
+  }
+  60% {
+    transform: translateX(4px) scale(0.95);
+  }
+}
+
+@keyframes ghost-fade-away {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-12px) scale(0.86);
+    opacity: 0.45;
+  }
+}
+
+@keyframes ghost-giggle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-6deg) scale(1.05);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.08);
+  }
+  75% {
+    transform: rotate(-3deg) scale(1.04);
+  }
+}
+
 .ghost-eye,
 .ghost-mouth {
   transition: transform 0.2s ease;
@@ -265,44 +357,170 @@ body {
   transform-origin: center;
 }
 
+/* Ghost's success/error language is grow-or-shrink, not squint/widen
+   (that's bunny's language, below), so the two never read the same. */
 .state-success .ghost-eye {
-  transform: scaleY(0.15) translateY(6px);
-}
-
-.state-error .ghost-eye {
-  transform: scaleY(0.3) rotate(-6deg);
-}
-
-.state-error .ghost-eye-r {
-  transform: scaleY(0.3) rotate(6deg);
-}
-
-.state-success .ghost-mouth {
   transform: scale(1.3);
 }
 
-.state-error .ghost-mouth {
-  transform: scaleY(0.5) translateY(-3px);
+.state-error .ghost-eye {
+  transform: scale(0.4) translateY(4px);
 }
 
-/* ---- Bunny expressions ---- */
+.state-poke .ghost-eye {
+  transform: scaleY(0.2) translateY(6px);
+}
+
+.state-success .ghost-mouth {
+  transform: scale(1.35);
+}
+
+.state-error .ghost-mouth {
+  transform: scaleY(0.25);
+}
+
+.state-poke .ghost-mouth {
+  transform: scale(1.5);
+}
+
+/* ---------------------------- Bunny ---------------------------- */
+#char-bunny .char-body {
+  animation: bunny-breathe 2.6s ease-in-out infinite;
+}
+
+.state-greet #char-bunny .char-body {
+  animation: bunny-greet 0.6s ease-out;
+}
+
+.state-working #char-bunny .char-body {
+  animation: bunny-alert 0.5s ease-in-out infinite;
+}
+
+.state-success #char-bunny .char-body {
+  animation: bunny-hop 0.6s ease-out;
+}
+
+.state-error #char-bunny .char-body {
+  animation: bunny-cower 0.5s ease-in-out;
+}
+
+.state-goodbye #char-bunny .char-body {
+  animation: bunny-sleepy 1.2s ease-in forwards;
+}
+
+.state-poke #char-bunny .char-body {
+  animation: bunny-giggle 0.6s ease-in-out;
+}
+
+@keyframes bunny-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+}
+
+@keyframes bunny-greet {
+  0% {
+    transform: scale(0.6) rotate(-4deg);
+  }
+  55% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  80% {
+    transform: scale(0.97) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes bunny-alert {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes bunny-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  40% {
+    transform: translateY(-11px) scale(1.03, 0.96);
+  }
+  65% {
+    transform: translateY(0) scale(0.97, 1.05);
+  }
+}
+
+@keyframes bunny-cower {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(5px) scale(0.93, 0.97);
+  }
+}
+
+@keyframes bunny-sleepy {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.94) translateY(3px);
+    opacity: 0.8;
+  }
+}
+
+@keyframes bunny-giggle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(0) rotate(2deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+}
+
 .bunny-eye,
-.bunny-mouth {
+.bunny-mouth,
+.bunny-mouth-laugh {
   transition: transform 0.2s ease;
   transform-box: fill-box;
   transform-origin: center;
 }
 
+.bunny-mouth-laugh {
+  display: none;
+}
+
+/* Bunny's success/error language is squint-or-widen (opposite of
+   ghost's grow/shrink), so a glance tells the two apart. */
 .state-success .bunny-eye {
   transform: scaleY(0.15) translateY(5px);
 }
 
 .state-error .bunny-eye {
-  transform: scaleY(0.3) rotate(-6deg);
+  transform: scale(1.2) translateY(-2px);
 }
 
-.state-error .bunny-eye-r {
-  transform: scaleY(0.3) rotate(6deg);
+.state-poke .bunny-eye {
+  transform: scaleY(0.2) translateY(5px);
 }
 
 .state-success .bunny-mouth {
@@ -310,5 +528,93 @@ body {
 }
 
 .state-error .bunny-mouth {
-  transform: scaleY(-1);
+  transform: scale(0.6) translateY(2px);
+}
+
+.state-poke .bunny-mouth {
+  display: none;
+}
+
+.state-poke .bunny-mouth-laugh {
+  display: block;
+}
+
+/* Ears: bunny's own expressive channel, pivoting from the base where
+   each ear meets the head rather than its own center. */
+.bunny-ear {
+  transition: transform 0.25s ease;
+}
+
+.bunny-ear-l {
+  transform-origin: 150px 220px;
+}
+
+.bunny-ear-r {
+  transform-origin: 210px 220px;
+}
+
+.state-greet .bunny-ear-l {
+  transform: rotate(-8deg);
+}
+
+.state-greet .bunny-ear-r {
+  transform: rotate(8deg);
+}
+
+.state-working .bunny-ear-l {
+  animation: bunny-ear-twitch-l 0.5s ease-in-out infinite;
+}
+
+.state-working .bunny-ear-r {
+  animation: bunny-ear-twitch-r 0.5s ease-in-out infinite;
+}
+
+@keyframes bunny-ear-twitch-l {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes bunny-ear-twitch-r {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+.state-success .bunny-ear-l {
+  transform: rotate(-5deg) scaleY(1.06);
+}
+
+.state-success .bunny-ear-r {
+  transform: rotate(5deg) scaleY(1.06);
+}
+
+/* Error: ears sweep back and flatten, the classic startled-rabbit tell. */
+.state-error .bunny-ear-l {
+  transform: rotate(38deg) scaleY(0.85);
+}
+
+.state-error .bunny-ear-r {
+  transform: rotate(-38deg) scaleY(0.85);
+}
+
+.state-goodbye .bunny-ear-l {
+  transform: rotate(16deg);
+}
+
+.state-goodbye .bunny-ear-r {
+  transform: rotate(-16deg);
+}
+
+/* Poke: one ear flops down mid-laugh, the other stays put. */
+.state-poke .bunny-ear-l {
+  transform: rotate(55deg);
 }
