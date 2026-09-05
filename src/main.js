@@ -80,19 +80,7 @@ function createSidekickWindow() {
 
   sidekickWindow.webContents.on('did-finish-load', () => {
     sidekickWindow.webContents.send('sidekick:character', getCharacter());
-    // Only this first appearance gets the pop-in entrance; every later
-    // hello (character switch, a real session starting, a cursor shake)
-    // uses the gentler repeatable wave() below, since the character's
-    // already fully visible by then.
-    setTimeout(() => {
-      if (!sidekickWindow || sidekickWindow.isDestroyed()) return;
-      sidekickWindow.webContents.send('sidekick:state', 'appear');
-      setTimeout(() => {
-        if (sidekickWindow && !sidekickWindow.isDestroyed()) {
-          sidekickWindow.webContents.send('sidekick:state', 'idle');
-        }
-      }, REACTION_HOLD_MS);
-    }, 600);
+    setTimeout(wave, 600);
   });
 }
 

@@ -5,9 +5,9 @@
  * synchronous function that's easy to unit test.
  */
 
-// 'appear' (first launch pop-in) and 'poke' (clicked) are triggered
-// locally rather than from a hook event, so they're not in this list,
-// but they're valid animation states the renderer also responds to.
+// 'poke' (clicked) is triggered locally in the renderer rather than
+// from a hook event, so it's not in this list, but it's a valid
+// animation state the renderer also responds to.
 const STATES = ['idle', 'greet', 'working', 'success', 'error', 'goodbye'];
 
 /** How long a reactive state (anything but idle/working) holds before
