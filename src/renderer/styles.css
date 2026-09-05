@@ -1,0 +1,214 @@
+html,
+body {
+  margin: 0;
+  width: 160px;
+  height: 160px;
+  background: transparent;
+  overflow: hidden;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+#stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blob {
+  position: relative;
+  width: 96px;
+  height: 88px;
+  background: linear-gradient(160deg, #7dd3c0 0%, #4fb8a8 100%);
+  border-radius: 42% 58% 65% 35% / 45% 45% 55% 55%;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  animation: breathe 3s ease-in-out infinite;
+  transition:
+    background 0.3s ease,
+    border-radius 0.4s ease;
+}
+
+.eye {
+  position: absolute;
+  top: 34px;
+  width: 12px;
+  height: 14px;
+  background: #1c2b28;
+  border-radius: 50%;
+  transition:
+    height 0.2s ease,
+    transform 0.2s ease;
+}
+
+.eye-left {
+  left: 26px;
+}
+
+.eye-right {
+  right: 26px;
+}
+
+.mouth {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  width: 18px;
+  height: 8px;
+  transform: translateX(-50%);
+  border-bottom: 3px solid #1c2b28;
+  border-radius: 0 0 10px 10px;
+  opacity: 0.85;
+}
+
+/* --- idle: gentle breathing loop --- */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03) translateY(-2px);
+  }
+}
+
+/* --- greet: pop in + little bounce, wide eyes --- */
+.state-greet .blob {
+  animation: greet-bounce 0.7s ease-out;
+}
+
+.state-greet .eye {
+  height: 16px;
+  transform: scale(1.1);
+}
+
+@keyframes greet-bounce {
+  0% {
+    transform: scale(0.6) translateY(20px);
+  }
+  55% {
+    transform: scale(1.12) translateY(-6px);
+  }
+  80% {
+    transform: scale(0.96) translateY(2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* --- working: quicker, focused jiggle --- */
+.state-working .blob {
+  animation: work-jiggle 0.9s ease-in-out infinite;
+}
+
+.state-working .eye {
+  height: 10px;
+}
+
+@keyframes work-jiggle {
+  0%,
+  100% {
+    transform: rotate(-1.5deg) scale(1);
+  }
+  50% {
+    transform: rotate(1.5deg) scale(1.02);
+  }
+}
+
+/* --- success: happy bounce, squeezed-shut eyes --- */
+.state-success .blob {
+  background: linear-gradient(160deg, #9ee79b 0%, #58c95a 100%);
+  animation: success-bounce 0.6s ease-out;
+}
+
+.state-success .eye {
+  height: 3px;
+  border-radius: 3px;
+  transform: translateY(4px);
+}
+
+.state-success .mouth {
+  width: 24px;
+  height: 12px;
+  border-bottom-width: 4px;
+}
+
+@keyframes success-bounce {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.15, 0.85) translateY(6px);
+  }
+  60% {
+    transform: scale(0.95, 1.08) translateY(-6px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* --- error: shake, worried eyes --- */
+.state-error .blob {
+  background: linear-gradient(160deg, #f3a6a6 0%, #de6f6f 100%);
+  animation: error-shake 0.5s ease-in-out;
+}
+
+.state-error .eye {
+  height: 4px;
+  border-radius: 2px;
+  transform: rotate(-8deg);
+}
+
+.state-error .eye-right {
+  transform: rotate(8deg);
+}
+
+.state-error .mouth {
+  border-bottom: none;
+  border-top: 3px solid #1c2b28;
+  border-radius: 10px 10px 0 0;
+  bottom: 18px;
+}
+
+@keyframes error-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px) rotate(-3deg);
+  }
+  40% {
+    transform: translateX(5px) rotate(3deg);
+  }
+  60% {
+    transform: translateX(-4px) rotate(-2deg);
+  }
+  80% {
+    transform: translateX(3px) rotate(1deg);
+  }
+}
+
+/* --- goodbye: settle, droop, fade slightly --- */
+.state-goodbye .blob {
+  animation: goodbye-settle 1.2s ease-in forwards;
+}
+
+.state-goodbye .eye {
+  height: 5px;
+  transform: translateY(3px);
+}
+
+@keyframes goodbye-settle {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.92) translateY(4px);
+    opacity: 0.75;
+  }
+}

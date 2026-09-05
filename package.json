@@ -1,0 +1,31 @@
+{
+  "name": "claude-sidekick",
+  "version": "0.1.0",
+  "description": "A small floating desktop companion that reacts in real time to your Claude Code sessions.",
+  "main": "src/main.js",
+  "author": "Juan Rome",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/",
+    "dist": "electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^32.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.juanrome.claudesidekick",
+    "productName": "Claude Sidekick",
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.developer-tools",
+      "identity": null
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ]
+  }
+}
