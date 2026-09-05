@@ -6,10 +6,8 @@ succeeds, looks worried when one fails, and greets/waves goodbye at the
 start and end of a session. No pixel art, a soft, rounded, animated
 character that lives wherever you drag it on screen.
 
-This is an early scaffold: the pipeline (tray icon, floating window, and
-the live hook connection) is fully working end to end, with one character
-(the blob) built out to validate the approach before drawing the rest of
-the roster (cat, small dragon).
+Three characters ship today: a blob, a ghost, and a bunny. Pick one from
+the tray icon's Character submenu.
 
 ## How it works
 
@@ -39,8 +37,9 @@ npm install
 npm start
 ```
 
-A small blob appears in the bottom-right corner of your screen (drag it
-anywhere you like), and a menu bar icon lets you show/hide it or quit.
+A small character appears in the bottom-right corner of your screen (drag
+it anywhere you like), and a menu bar icon lets you show/hide it, switch
+characters, or quit.
 
 ### 2. Point Claude Code's hooks at it
 
@@ -92,8 +91,9 @@ npm test
 
 ## What's next
 
-- Draw out the cat and small-dragon characters and wire up a character
-  switcher (the state machine and window/tray plumbing already support
-  swapping the rendered character, only the art is missing).
-- Replace the CSS-animated blob with proper vector/Lottie-style animation
-  for smoother motion.
+- More characters.
+- Live2D-quality rigged animation was scoped and deliberately set aside
+  for now (it needs pre-layered source art plus a real rigging pass in
+  Cubism Editor, a much bigger lift than this project's scope); the
+  current approach hand-builds detailed SVG art and animates it with CSS,
+  aiming for a similar visual richness without the separate rigging tool.

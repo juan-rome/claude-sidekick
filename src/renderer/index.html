@@ -6,11 +6,153 @@
   </head>
   <body>
     <div id="stage" class="state-idle">
-      <div class="blob">
-        <div class="eye eye-left"></div>
-        <div class="eye eye-right"></div>
-        <div class="mouth"></div>
+      <div id="char-blob" class="character blob-wrap">
+        <div class="blob">
+          <div class="eye eye-left"></div>
+          <div class="eye eye-right"></div>
+          <div class="mouth"></div>
+        </div>
       </div>
+
+      <svg id="char-ghost" class="character" viewBox="0 0 160 160" width="160" height="160">
+        <defs>
+          <radialGradient id="eyeShineGhost" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <g transform="translate(80,8) scale(0.78) translate(-180,-120)">
+        <g class="char-body">
+          <path
+            class="ghost-body"
+            d="M 110 195 A 70 70 0 0 1 250 195 L 250 290
+               A 17.5 17.5 0 0 1 215 290
+               A 17.5 17.5 0 0 1 180 290
+               A 17.5 17.5 0 0 1 145 290
+               A 17.5 17.5 0 0 1 110 290 Z"
+            fill="#ded4f7"
+          />
+          <path
+            d="M 138 250 Q 133 200 180 195 Q 227 200 222 250 Q 208 278 180 280 Q 152 278 138 250 Z"
+            fill="#bda8e8"
+            opacity="0.5"
+          />
+          <ellipse cx="153" cy="200" rx="26" ry="18" fill="#ffffff" opacity="0.55" />
+          <ellipse cx="140" cy="205" rx="10" ry="6" fill="#f2879b" opacity="0.5" />
+          <ellipse cx="220" cy="205" rx="10" ry="6" fill="#f2879b" opacity="0.5" />
+
+          <ellipse class="ghost-eye ghost-eye-l" cx="157" cy="188" rx="13" ry="16" fill="#2a2140" />
+          <ellipse class="ghost-eye ghost-eye-r" cx="203" cy="188" rx="13" ry="16" fill="#2a2140" />
+          <ellipse cx="157" cy="192" rx="9" ry="11" fill="#7a68b0" />
+          <ellipse cx="203" cy="192" rx="9" ry="11" fill="#7a68b0" />
+          <circle cx="152" cy="182" r="5.5" fill="url(#eyeShineGhost)" />
+          <circle cx="198" cy="182" r="5.5" fill="url(#eyeShineGhost)" />
+          <circle cx="161" cy="197" r="2" fill="#ffffff" opacity="0.85" />
+          <circle cx="207" cy="197" r="2" fill="#ffffff" opacity="0.85" />
+
+          <ellipse class="ghost-mouth" cx="180" cy="222" rx="8" ry="10" fill="#2a2140" opacity="0.85" />
+          <ellipse cx="180" cy="226" rx="5" ry="4" fill="#7a68b0" />
+
+          <ellipse cx="117" cy="230" rx="12" ry="9" fill="#ded4f7" transform="rotate(20 117 230)" />
+          <ellipse cx="243" cy="230" rx="12" ry="9" fill="#ded4f7" transform="rotate(-20 243 230)" />
+        </g>
+        </g>
+      </svg>
+
+      <svg id="char-bunny" class="character" viewBox="0 0 160 160" width="160" height="160">
+        <defs>
+          <radialGradient id="eyeShineBunny" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <g transform="translate(80,4) scale(0.58) translate(-180,-78)">
+        <g class="char-body">
+          <path
+            d="M 145 220 Q 110 110 148 88 Q 172 78 172 130 Q 172 175 165 225 Z"
+            fill="#f3ede2"
+          />
+          <path
+            d="M 215 220 Q 250 110 212 88 Q 188 78 188 130 Q 188 175 195 225 Z"
+            fill="#f3ede2"
+          />
+          <path
+            d="M 150 210 Q 128 130 150 105 Q 162 100 162 135 Q 162 172 158 214 Z"
+            fill="#f2a9bb"
+          />
+          <path
+            d="M 210 210 Q 232 130 210 105 Q 198 100 198 135 Q 198 172 202 214 Z"
+            fill="#f2a9bb"
+          />
+          <path
+            d="M 148 200 Q 132 140 150 112"
+            fill="none"
+            stroke="#d9cfbd"
+            stroke-width="4"
+            opacity="0.5"
+            stroke-linecap="round"
+          />
+          <path
+            d="M 212 200 Q 228 140 210 112"
+            fill="none"
+            stroke="#d9cfbd"
+            stroke-width="4"
+            opacity="0.5"
+            stroke-linecap="round"
+          />
+
+          <circle class="bunny-body" cx="180" cy="270" r="66" fill="#f3ede2" />
+          <ellipse cx="180" cy="300" rx="70" ry="44" fill="#fffaf0" />
+          <path
+            d="M 130 290 Q 140 240 180 232 Q 165 260 155 300 Q 140 305 130 290 Z"
+            fill="#e3d9c6"
+            opacity="0.6"
+          />
+          <path d="M 116 280 l -10 -6 l 3 12 Z" fill="#f3ede2" />
+          <path d="M 244 280 l 10 -6 l -3 12 Z" fill="#f3ede2" />
+
+          <ellipse cx="140" cy="288" rx="12" ry="7" fill="#f2879b" opacity="0.55" />
+          <ellipse cx="220" cy="288" rx="12" ry="7" fill="#f2879b" opacity="0.55" />
+
+          <ellipse class="bunny-eye bunny-eye-l" cx="155" cy="268" rx="12" ry="15" fill="#2a1c14" />
+          <ellipse class="bunny-eye bunny-eye-r" cx="205" cy="268" rx="12" ry="15" fill="#2a1c14" />
+          <ellipse cx="155" cy="272" rx="8" ry="10" fill="#8a5a36" />
+          <ellipse cx="205" cy="272" rx="8" ry="10" fill="#8a5a36" />
+          <circle cx="151" cy="263" r="5" fill="url(#eyeShineBunny)" />
+          <circle cx="201" cy="263" r="5" fill="url(#eyeShineBunny)" />
+          <circle cx="159" cy="276" r="1.8" fill="#ffffff" opacity="0.85" />
+          <circle cx="209" cy="276" r="1.8" fill="#ffffff" opacity="0.85" />
+
+          <ellipse cx="180" cy="292" rx="5" ry="4" fill="#e88fa0" />
+          <rect
+            x="174"
+            y="298"
+            width="6"
+            height="9"
+            rx="1.5"
+            fill="#ffffff"
+            stroke="#e3dccb"
+            stroke-width="0.5"
+          />
+          <rect
+            x="180"
+            y="298"
+            width="6"
+            height="9"
+            rx="1.5"
+            fill="#ffffff"
+            stroke="#e3dccb"
+            stroke-width="0.5"
+          />
+          <path class="bunny-mouth" d="M 172 300 Q 180 306 188 300" fill="none" stroke="#8a5a36" stroke-width="2.5" stroke-linecap="round" />
+
+          <line x1="120" y1="282" x2="92" y2="277" stroke="#c9bfa8" stroke-width="1.5" />
+          <line x1="120" y1="290" x2="92" y2="292" stroke="#c9bfa8" stroke-width="1.5" />
+          <line x1="240" y1="282" x2="268" y2="277" stroke="#c9bfa8" stroke-width="1.5" />
+          <line x1="240" y1="290" x2="268" y2="292" stroke="#c9bfa8" stroke-width="1.5" />
+        </g>
+        </g>
+      </svg>
     </div>
     <script src="renderer.js"></script>
   </body>

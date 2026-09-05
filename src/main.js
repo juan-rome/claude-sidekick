@@ -10,6 +10,23 @@ let hookServer;
 let moveSaveTimer = null;
 
 const WINDOW_SIZE = 160;
+const CHARACTERS = [
+  { id: 'blob', label: 'Blob' },
+  { id: 'ghost', label: 'Ghost' },
+  { id: 'bunny', label: 'Bunny' },
+];
+
+function getCharacter() {
+  return store.get('character') || 'blob';
+}
+
+function setCharacter(character) {
+  store.set('character', character);
+  if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+    sidekickWindow.webContents.send('sidekick:character', character);
+  }
+  createTray();
+}
 
 function defaultPosition() {
   const { workArea } = screen.getPrimaryDisplay();
@@ -45,6 +62,10 @@ function createSidekickWindow() {
   sidekickWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   sidekickWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
+  sidekickWindow.webContents.on('did-finish-load', () => {
+    sidekickWindow.webContents.send('sidekick:character', getCharacter());
+  });
+
   sidekickWindow.on('moved', () => {
     if (moveSaveTimer) clearTimeout(moveSaveTimer);
     moveSaveTimer = setTimeout(() => {
@@ -55,20 +76,34 @@ function createSidekickWindow() {
 }
 
 function createTray() {
-  const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'tray-icon.png'));
-  icon.addRepresentation({
-    scaleFactor: 2,
-    buffer: fs.readFileSync(path.join(__dirname, 'assets', 'tray-icon@2x.png')),
-  });
-  icon.setTemplateImage(true);
+  if (!tray) {
+    const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'tray-icon.png'));
+    icon.addRepresentation({
+      scaleFactor: 2,
+      buffer: fs.readFileSync(path.join(__dirname, 'assets', 'tray-icon@2x.png')),
+    });
+    icon.setTemplateImage(true);
+    tray = new Tray(icon);
+    tray.setToolTip('Claude Sidekick');
+  }
 
-  tray = new Tray(icon);
-  tray.setToolTip('Claude Sidekick');
+  const currentCharacter = getCharacter();
+
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
         label: sidekickWindow.isVisible() ? 'Hide Sidekick' : 'Show Sidekick',
         click: toggleVisibility,
+      },
+      { type: 'separator' },
+      {
+        label: 'Character',
+        submenu: CHARACTERS.map(({ id, label }) => ({
+          label,
+          type: 'radio',
+          checked: currentCharacter === id,
+          click: () => setCharacter(id),
+        })),
       },
       { type: 'separator' },
       { label: 'Quit Claude Sidekick', click: () => app.quit() },

@@ -12,9 +12,19 @@ body {
 #stage {
   width: 100%;
   height: 100%;
-  display: flex;
+  position: relative;
+}
+
+.character {
+  display: none;
+  width: 100%;
+  height: 100%;
   align-items: center;
   justify-content: center;
+}
+
+.character.active {
+  display: flex;
 }
 
 .blob {
@@ -211,4 +221,94 @@ body {
     transform: scale(0.92) translateY(4px);
     opacity: 0.75;
   }
+}
+
+/* ================= Ghost & Bunny: shared body motion ================= */
+/* The positioning transform lives on the parent <g>; .char-body carries no
+   static transform of its own, so these CSS animations can freely drive
+   its transform without fighting the SVG attribute transform above it. */
+#char-ghost .char-body,
+#char-bunny .char-body {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.state-greet #char-ghost .char-body,
+.state-greet #char-bunny .char-body {
+  animation: greet-bounce 0.7s ease-out;
+}
+
+.state-working #char-ghost .char-body,
+.state-working #char-bunny .char-body {
+  animation: work-jiggle 0.9s ease-in-out infinite;
+}
+
+.state-success #char-ghost .char-body,
+.state-success #char-bunny .char-body {
+  animation: success-bounce 0.6s ease-out;
+}
+
+.state-error #char-ghost .char-body,
+.state-error #char-bunny .char-body {
+  animation: error-shake 0.5s ease-in-out;
+}
+
+.state-goodbye #char-ghost .char-body,
+.state-goodbye #char-bunny .char-body {
+  animation: goodbye-settle 1.2s ease-in forwards;
+}
+
+/* ---- Ghost expressions ---- */
+.ghost-eye,
+.ghost-mouth {
+  transition: transform 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.state-success .ghost-eye {
+  transform: scaleY(0.15) translateY(6px);
+}
+
+.state-error .ghost-eye {
+  transform: scaleY(0.3) rotate(-6deg);
+}
+
+.state-error .ghost-eye-r {
+  transform: scaleY(0.3) rotate(6deg);
+}
+
+.state-success .ghost-mouth {
+  transform: scale(1.3);
+}
+
+.state-error .ghost-mouth {
+  transform: scaleY(0.5) translateY(-3px);
+}
+
+/* ---- Bunny expressions ---- */
+.bunny-eye,
+.bunny-mouth {
+  transition: transform 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.state-success .bunny-eye {
+  transform: scaleY(0.15) translateY(5px);
+}
+
+.state-error .bunny-eye {
+  transform: scaleY(0.3) rotate(-6deg);
+}
+
+.state-error .bunny-eye-r {
+  transform: scaleY(0.3) rotate(6deg);
+}
+
+.state-success .bunny-mouth {
+  transform: scale(1.4);
+}
+
+.state-error .bunny-mouth {
+  transform: scaleY(-1);
 }
