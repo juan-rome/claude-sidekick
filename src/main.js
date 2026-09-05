@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, screen } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, screen, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const store = require('./lib/store');
@@ -8,7 +8,7 @@ const { REACTION_HOLD_MS } = require('./lib/hookState');
 let tray;
 let sidekickWindow;
 let hookServer;
-let moveSaveTimer = null;
+let dragOrigin = null;
 
 const WINDOW_SIZE = 160;
 const CHARACTERS = [
@@ -27,6 +27,21 @@ function setCharacter(character) {
     sidekickWindow.webContents.send('sidekick:character', character);
   }
   createTray();
+  wave();
+}
+
+/** A little hello, independent of any real Claude Code session: on first
+ *  launch, and again whenever you switch characters so the new one gets
+ *  its own greeting. Sent directly rather than through the hook server,
+ *  since that path already owns hook-driven reverts. */
+function wave() {
+  if (!sidekickWindow || sidekickWindow.isDestroyed()) return;
+  sidekickWindow.webContents.send('sidekick:state', 'greet');
+  setTimeout(() => {
+    if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+      sidekickWindow.webContents.send('sidekick:state', 'idle');
+    }
+  }, REACTION_HOLD_MS);
 }
 
 function defaultPosition() {
@@ -65,27 +80,7 @@ function createSidekickWindow() {
 
   sidekickWindow.webContents.on('did-finish-load', () => {
     sidekickWindow.webContents.send('sidekick:character', getCharacter());
-    // A little hello once the character's actually on screen, independent
-    // of any real Claude Code session starting. Sent directly rather than
-    // through the hook server, so it settles itself back to idle here too.
-    setTimeout(() => {
-      if (sidekickWindow && !sidekickWindow.isDestroyed()) {
-        sidekickWindow.webContents.send('sidekick:state', 'greet');
-        setTimeout(() => {
-          if (sidekickWindow && !sidekickWindow.isDestroyed()) {
-            sidekickWindow.webContents.send('sidekick:state', 'idle');
-          }
-        }, REACTION_HOLD_MS);
-      }
-    }, 400);
-  });
-
-  sidekickWindow.on('moved', () => {
-    if (moveSaveTimer) clearTimeout(moveSaveTimer);
-    moveSaveTimer = setTimeout(() => {
-      const [x, y] = sidekickWindow.getPosition();
-      store.set('windowPosition', { x, y });
-    }, 300);
+    setTimeout(wave, 600);
   });
 }
 
@@ -132,6 +127,29 @@ function toggleVisibility() {
     sidekickWindow.show();
   }
 }
+
+// Dragging is handled manually (rather than -webkit-app-region: drag) so
+// the renderer can tell a real drag apart from a click-to-poke: a drag
+// region swallows click events entirely, which is why clicking the
+// character to poke it never fired anything.
+ipcMain.on('sidekick:drag-start', () => {
+  if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+    dragOrigin = sidekickWindow.getPosition();
+  }
+});
+
+ipcMain.on('sidekick:drag-move', (_event, dx, dy) => {
+  if (!dragOrigin || !sidekickWindow || sidekickWindow.isDestroyed()) return;
+  sidekickWindow.setPosition(Math.round(dragOrigin[0] + dx), Math.round(dragOrigin[1] + dy));
+});
+
+ipcMain.on('sidekick:drag-end', () => {
+  dragOrigin = null;
+  if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+    const [x, y] = sidekickWindow.getPosition();
+    store.set('windowPosition', { x, y });
+  }
+});
 
 app.whenReady().then(() => {
   createSidekickWindow();

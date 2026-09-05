@@ -5,8 +5,8 @@ body {
   height: 160px;
   background: transparent;
   overflow: hidden;
-  -webkit-app-region: drag;
   user-select: none;
+  cursor: pointer;
 }
 
 #stage {
@@ -553,12 +553,36 @@ body {
   transform-origin: 210px 220px;
 }
 
+/* Greet: no arms to wave with, so the right ear waves instead, rocking
+   back and forth a few times like a hand, while the left ear just perks. */
 .state-greet .bunny-ear-l {
-  transform: rotate(-8deg);
+  transform: rotate(-6deg);
 }
 
 .state-greet .bunny-ear-r {
-  transform: rotate(8deg);
+  animation: bunny-ear-wave 1.1s ease-in-out;
+}
+
+@keyframes bunny-ear-wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(22deg);
+  }
+  35% {
+    transform: rotate(-6deg);
+  }
+  55% {
+    transform: rotate(18deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  90% {
+    transform: rotate(8deg);
+  }
 }
 
 .state-working .bunny-ear-l {
