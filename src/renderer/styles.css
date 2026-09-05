@@ -638,8 +638,7 @@ body {
   transform: rotate(-16deg);
 }
 
-/* Poke: one ear flops all the way down past the cheek mid-laugh (not
-   sideways), the other stays put. */
+/* Poke: one ear tilts sideways mid-laugh, the other stays put. */
 .state-poke .bunny-ear-l {
-  transform: rotate(168deg);
+  transform: rotate(38deg);
 }
