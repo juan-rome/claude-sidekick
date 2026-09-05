@@ -406,6 +406,45 @@ body {
   transform: scale(1.5);
 }
 
+/* Arms: ghost's own expressive channel for greet, same idea as bunny's
+   ear-wave, pivoting from each arm's own position. */
+.ghost-arm {
+  transition: transform 0.25s ease;
+}
+
+.ghost-arm-l {
+  transform: rotate(20deg);
+  transform-origin: 117px 230px;
+}
+
+.ghost-arm-r {
+  transform: rotate(-20deg);
+  transform-origin: 243px 230px;
+}
+
+.state-greet .ghost-arm-r {
+  animation: ghost-arm-wave 0.9s ease-in-out;
+}
+
+@keyframes ghost-arm-wave {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+  20% {
+    transform: rotate(-48deg);
+  }
+  40% {
+    transform: rotate(-8deg);
+  }
+  60% {
+    transform: rotate(-42deg);
+  }
+  80% {
+    transform: rotate(-14deg);
+  }
+}
+
 /* ---------------------------- Bunny ---------------------------- */
 #char-bunny .char-body {
   animation: bunny-breathe 2.6s ease-in-out infinite;
