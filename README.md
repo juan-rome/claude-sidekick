@@ -1,5 +1,8 @@
 # Claude Sidekick
 
+*An independent personal project built with Claude Code. Not an official
+Anthropic product, and not affiliated with or endorsed by Anthropic.*
+
 ![The five characters](docs/screenshots/characters.png)
 
 A small floating desktop companion that reacts in real time to your Claude
