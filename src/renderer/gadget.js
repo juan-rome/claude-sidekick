@@ -14,6 +14,9 @@ const SIZE = 160;
 // half-height (~51 units at this distance/FOV) even with the nub and the
 // biggest reaction pop included.
 const BASE_SCALE = 1.4;
+// Frosted glass, not sheer: 0.55 read as too see-through against the
+// screen and controls behind it.
+const BASE_OPACITY = 0.8;
 
 let renderer;
 let scene;
@@ -79,7 +82,7 @@ function buildBody() {
   bodyMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xf3effc,
     transparent: true,
-    opacity: 0.55,
+    opacity: BASE_OPACITY,
     roughness: 0.15,
     clearcoat: 1,
     clearcoatRoughness: 0.15,
@@ -92,7 +95,7 @@ function buildBody() {
   // The little raised nub on top edge, seen on the reference device.
   const nub = new THREE.Mesh(
     new THREE.SphereGeometry(2, 12, 12),
-    new THREE.MeshPhysicalMaterial({ color: 0xf3effc, transparent: true, opacity: 0.6, roughness: 0.2 })
+    new THREE.MeshPhysicalMaterial({ color: 0xf3effc, transparent: true, opacity: BASE_OPACITY, roughness: 0.2 })
   );
   nub.position.set(10, 26, 0);
   shell.add(nub);
@@ -322,14 +325,14 @@ function animateShell(elapsed) {
       const settle = Math.min(t / 1.2, 1);
       y = -settle * 3;
       scale = 1 - settle * 0.08;
-      bodyMaterial.opacity = 0.55 * (1 - settle * 0.4);
+      bodyMaterial.opacity = BASE_OPACITY * (1 - settle * 0.4);
       break;
     }
     default: // idle
       y = Math.sin(elapsed * 1.4) * 1.5;
   }
 
-  if (state !== 'goodbye') bodyMaterial.opacity = 0.55;
+  if (state !== 'goodbye') bodyMaterial.opacity = BASE_OPACITY;
   shell.position.y = y;
   shell.scale.setScalar(scale * BASE_SCALE);
   shell.rotation.z = rotZ;
