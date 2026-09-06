@@ -59,8 +59,10 @@ active, WebGL2 fallback automatic where WebGPU isn't available):
 - **Idle/working/question**: a handful of faint ambient motes drifting
   nearby, fading out for busier states so they don't compete with a burst.
 
-Every reactive state but working also pops a short speech bubble above
-the character: "Hi!", "Done!", "Oops!", "Hm?", "Bye!", "Hehe!" on poke.
+Every reactive state but working and success also pops a short speech
+bubble above the character: "Hi!", "Oops!", "Need input?", "Bye!",
+"Hehe!" on poke. Success skips it too, since the confetti and happy
+face already say it.
 
 A full 3D redesign of the ghost and bunny (procedural Three.js primitives
 instead of SVG) was prototyped and set aside: it looked like a 3D

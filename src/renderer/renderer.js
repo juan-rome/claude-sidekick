@@ -21,14 +21,15 @@ const POKE_HOLD_MS = 1500;
 /** No line for idle/working: idle is the resting state (a bubble there
  *  would just be noise), and working now covers every tool call (both
  *  Pre- and PostToolUse), so giving it a line would mean one popping up
- *  constantly while a session runs. Every other, occasional state gets
- *  a one-word reaction — including question, which just holds up its
- *  line for as long as the state itself holds. */
+ *  constantly while a session runs. No line for success either, since
+ *  the confetti and happy face already say it without needing a "Done!"
+ *  on top. Every other, occasional state gets a one-word reaction,
+ *  including question, which just holds up its line for as long as the
+ *  state itself holds. */
 const BUBBLE_TEXT = {
   greet: 'Hi!',
-  success: 'Done!',
   error: 'Oops!',
-  question: 'Hm?',
+  question: 'Need input?',
   goodbye: 'Bye!',
   poke: 'Hehe!',
 };
