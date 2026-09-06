@@ -1,4 +1,4 @@
-import { initParticles, burst } from './particles.js';
+import { initParticles, burst, setParticleState } from './particles.js';
 import { initJellyfish, setJellyfishState } from './jellyfish.js';
 
 const stage = document.getElementById('stage');
@@ -17,6 +17,7 @@ function setState(state) {
   currentState = state;
   stage.className = `state-${state}`;
   setJellyfishState(state);
+  setParticleState(state);
   if (state === 'success') burst();
 }
 

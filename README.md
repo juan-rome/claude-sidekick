@@ -34,9 +34,22 @@ Reactive states (everything but idle/working) automatically settle back
 to idle a couple of seconds after firing, so the character never gets
 stuck mid-reaction.
 
-Success also triggers a small WebGPU-rendered confetti burst (Three.js's
-`WebGPURenderer`, layered on a transparent canvas over the SVG character),
-with automatic fallback to WebGL2 on hardware that doesn't support WebGPU.
+All of that runs on the same shared WebGPU accent layer (Three.js's
+`WebGPURenderer` on a transparent canvas over whichever SVG character is
+active, WebGL2 fallback automatic where WebGPU isn't available):
+
+- **Success**: a confetti burst.
+- **Poke**: a soft gray "poof" puff.
+- **Error**: a couple of worried blue drops falling.
+- **Working**: a light sparkle trail orbiting the character.
+- **Idle/working**: a handful of faint ambient motes drifting nearby,
+  fading out for busier states so they don't compete with a burst.
+
+A full 3D redesign of the ghost and bunny (procedural Three.js primitives
+instead of SVG) was prototyped and set aside: it looked like a 3D
+character, just not *that* character, since it dropped the exact palette
+and proportions the SVG versions had already been tuned to. Layering
+accents on top of the existing art, as above, kept what already worked.
 
 ## Setup
 
