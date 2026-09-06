@@ -1,14 +1,16 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, screen, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const store = require('./lib/store');
 const { startHookServer, DEFAULT_PORT } = require('./lib/hookServer');
 const { REACTION_HOLD_MS } = require('./lib/hookState');
+const { areHooksInstalled, installHooks, settingsPath } = require('./lib/hooksInstaller');
 
 let tray;
 let sidekickWindow;
 let hookServer;
 let dragOrigin = null;
+let hooksReady = false;
 
 const WINDOW_SIZE = 160;
 const CHARACTERS = [
@@ -98,6 +100,17 @@ function createTray() {
     tray.setToolTip('Claude Sidekick');
   }
 
+  if (!hooksReady) {
+    tray.setContextMenu(
+      Menu.buildFromTemplate([
+        { label: 'Install Hooks to Get Started', click: runInstallHooks },
+        { type: 'separator' },
+        { label: 'Quit Claude Sidekick', click: () => app.quit() },
+      ])
+    );
+    return;
+  }
+
   const currentCharacter = getCharacter();
 
   tray.setContextMenu(
@@ -130,6 +143,37 @@ function toggleVisibility() {
   }
 }
 
+/**
+ * Sidekick shouldn't be visible on screen at all until Claude Code is
+ * actually wired up to talk to it, since an unhooked window would just
+ * sit there doing nothing and looking broken. This is the one thing
+ * that turns it on: merge the hook config into ~/.claude/settings.json,
+ * then create and show the window for the first time.
+ */
+function runInstallHooks() {
+  try {
+    installHooks();
+    hooksReady = true;
+    if (!sidekickWindow || sidekickWindow.isDestroyed()) {
+      createSidekickWindow();
+    }
+    createTray();
+    dialog.showMessageBox({
+      type: 'info',
+      title: 'Claude Sidekick',
+      message: 'Hooks installed!',
+      detail:
+        'Claude Code reads its settings at the start of a session, so restart any session that\'s already running for it to pick up Sidekick.',
+      buttons: ['OK'],
+    });
+  } catch (err) {
+    dialog.showErrorBox(
+      'Could not install hooks',
+      `${err.message}\n\nYou can add them yourself in ${settingsPath()} instead — see the README.`
+    );
+  }
+}
+
 // Dragging is handled manually (rather than -webkit-app-region: drag) so
 // the renderer can tell a real drag apart from a click-to-poke: a drag
 // region swallows click events entirely, which is why clicking the
@@ -154,7 +198,10 @@ ipcMain.on('sidekick:drag-end', () => {
 });
 
 app.whenReady().then(() => {
-  createSidekickWindow();
+  hooksReady = areHooksInstalled();
+  if (hooksReady) {
+    createSidekickWindow();
+  }
   createTray();
 
   hookServer = startHookServer({

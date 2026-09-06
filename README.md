@@ -64,14 +64,23 @@ npm install
 npm start
 ```
 
-A small character appears in the bottom-right corner of your screen (drag
-it anywhere you like), and a menu bar icon lets you show/hide it, switch
-characters, or quit.
+Sidekick stays invisible until it's actually wired up to Claude Code —
+an unhooked character would just sit there doing nothing. A menu bar
+icon appears with one item: **Install Hooks to Get Started**. Click it
+and Sidekick merges its hook config into `~/.claude/settings.json` for
+you (a `.bak` copy of the file is written first) and shows the character
+for the first time, in the bottom-right corner of your screen (drag it
+anywhere you like). Restart any Claude Code session that was already
+running so it picks up the new hooks.
 
-### 2. Point Claude Code's hooks at it
+Once installed, the menu bar icon switches to the full menu: show/hide
+the character, switch characters, or quit.
 
-Add this to your `~/.claude/settings.json` (or a project's
-`.claude/settings.json`) to forward the relevant events:
+### Setting hooks up by hand
+
+If you'd rather not have Sidekick edit your settings file, add this to
+`~/.claude/settings.json` (or a project's `.claude/settings.json`)
+yourself to forward the relevant events:
 
 ```json
 {
@@ -110,7 +119,7 @@ Add this to your `~/.claude/settings.json` (or a project's
 Claude Code POSTs its normal hook JSON straight to Sidekick, no extra
 scripting needed.
 
-### 3. Run the tests
+### 2. Run the tests
 
 ```bash
 npm test
