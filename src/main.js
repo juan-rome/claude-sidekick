@@ -106,7 +106,7 @@ function openGalleryWindow() {
 
   galleryWindow = new BrowserWindow({
     width: 480,
-    height: 780,
+    height: 660,
     title: 'Sidekick Character Viewer',
   });
   galleryWindow.loadFile(path.join(__dirname, 'renderer', 'gallery.html'));
