@@ -5,7 +5,7 @@ const store = require('./lib/store');
 const { startHookServer, DEFAULT_PORT } = require('./lib/hookServer');
 const { REACTION_HOLD_MS } = require('./lib/hookState');
 const { areHooksInstalled, installHooks, uninstallHooks, settingsPath } = require('./lib/hooksInstaller');
-const { activateApp, startTrackingFrontmostApp } = require('./lib/frontmostApp');
+const { activateApp, createFrontmostAppTracker } = require('./lib/frontmostApp');
 
 let tray;
 let sidekickWindow;
@@ -345,6 +345,10 @@ ipcMain.on('sidekick:drag-start', () => {
   if (sidekickWindow && !sidekickWindow.isDestroyed()) {
     dragOrigin = sidekickWindow.getPosition();
   }
+  // Captured here, at the very start of the click/drag gesture, rather
+  // than from a background poll: this is the freshest possible read of
+  // "what was frontmost right before you touched Sidekick."
+  if (frontmostAppTracker) frontmostAppTracker.capture();
 });
 
 ipcMain.on('sidekick:drag-move', (_event, dx, dy) => {
@@ -369,7 +373,7 @@ app.whenReady().then(() => {
   }
   createTray();
 
-  frontmostAppTracker = startTrackingFrontmostApp({ appGetName: app.getName() });
+  frontmostAppTracker = createFrontmostAppTracker({ appGetName: app.getName() });
 
   hookServer = startHookServer({
     port: DEFAULT_PORT,
@@ -388,5 +392,4 @@ app.on('window-all-closed', (event) => {
 
 app.on('before-quit', () => {
   if (hookServer) hookServer.close();
-  if (frontmostAppTracker) frontmostAppTracker.stop();
 });

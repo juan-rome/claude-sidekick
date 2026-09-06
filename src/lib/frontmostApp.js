@@ -19,6 +19,14 @@ function getFrontmostAppName() {
   });
 }
 
+/**
+ * `tell application "X" to activate` alone doesn't reliably restore a
+ * minimized window on macOS: it can make the app frontmost while its
+ * window stays sitting in the Dock. Un-minimizing needs the
+ * accessibility API specifically, so this walks the process's windows
+ * via System Events and clears AXMinimized on any that are set, then
+ * sets the process frontmost.
+ */
 function activateApp(name) {
   return new Promise((resolve) => {
     if (!name) {
@@ -26,7 +34,19 @@ function activateApp(name) {
       return;
     }
     const escaped = name.replace(/"/g, '\\"');
-    execFile('osascript', ['-e', `tell application "${escaped}" to activate`], (err) => {
+    const script = `
+      tell application "System Events"
+        tell process "${escaped}"
+          repeat with w in windows
+            if value of attribute "AXMinimized" of w is true then
+              set value of attribute "AXMinimized" of w to false
+            end if
+          end repeat
+          set frontmost to true
+        end tell
+      end tell
+    `;
+    execFile('osascript', ['-e', script], (err) => {
       resolve(!err);
     });
   });
@@ -34,32 +54,37 @@ function activateApp(name) {
 
 /**
  * Remembers whichever app was frontmost before Sidekick's own window
- * most recently took focus, so a double-click can bring it back.
- * Claude Code doesn't have one single "window" (Terminal, iTerm,
- * VS Code, the Claude desktop app...), so rather than guess which one
- * you use, this just tracks whatever was actually in front, the same
- * thing Cmd+Tab would take you back to.
+ * takes focus, so a double-click can bring it back. Claude Code doesn't
+ * have one single "window" (Terminal, iTerm, VS Code, the Claude
+ * desktop app...), so rather than guess which one you use, this just
+ * tracks whatever was actually in front, the same thing Cmd+Tab would
+ * take you back to.
  *
- * Implemented as light polling via AppleScript (System Events), since
- * Electron has no direct visibility into which *other* application is
- * frontmost. Triggers the one-time "Sidekick wants to control this
- * computer using System Events" Automation permission prompt on macOS.
+ * Captured fresh on demand (call `capture()` right when a click gesture
+ * starts) rather than via a background poll: a periodic poll only knows
+ * what was frontmost as of its last tick, which can be stale by however
+ * long the interval is, or worse if that app was ever true again. A
+ * capture at the moment of interaction reflects what you were actually
+ * just looking at.
+ *
+ * Uses AppleScript (System Events), since Electron has no direct
+ * visibility into which *other* application is frontmost. Triggers the
+ * one-time "Sidekick wants to control this computer using System
+ * Events" Automation permission prompt on macOS the first time it runs.
  */
-function startTrackingFrontmostApp({ appGetName, intervalMs = 3000 } = {}) {
+function createFrontmostAppTracker({ appGetName } = {}) {
   const excluded = ownAppNames(appGetName);
   let lastOtherApp = null;
 
-  const timer = setInterval(async () => {
-    const name = await getFrontmostAppName();
-    if (name && !excluded.has(name)) {
-      lastOtherApp = name;
-    }
-  }, intervalMs);
-
   return {
+    capture: async () => {
+      const name = await getFrontmostAppName();
+      if (name && !excluded.has(name)) {
+        lastOtherApp = name;
+      }
+    },
     getLastOtherApp: () => lastOtherApp,
-    stop: () => clearInterval(timer),
   };
 }
 
-module.exports = { getFrontmostAppName, activateApp, startTrackingFrontmostApp };
+module.exports = { getFrontmostAppName, activateApp, createFrontmostAppTracker };

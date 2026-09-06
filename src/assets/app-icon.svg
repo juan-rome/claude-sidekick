@@ -1,16 +1,17 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#332b26" />
-      <stop offset="100%" stop-color="#1a1613" />
+      <stop offset="0%" stop-color="#e8a587" />
+      <stop offset="55%" stop-color="#c15f3c" />
+      <stop offset="100%" stop-color="#7a3420" />
     </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
-      <stop offset="0%" stop-color="#c15f3c" stop-opacity="0.55" />
-      <stop offset="100%" stop-color="#c15f3c" stop-opacity="0" />
+    <radialGradient id="vignette" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
     </radialGradient>
     <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#000000" stop-opacity="0.45" />
-      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="0%" stop-color="#140f1f" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#140f1f" stop-opacity="0" />
     </radialGradient>
     <linearGradient id="shellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fdfbff" />
@@ -18,7 +19,7 @@
     </linearGradient>
   </defs>
   <rect x="0" y="0" width="200" height="200" rx="44" fill="url(#bg)" />
-  <rect x="0" y="0" width="200" height="200" rx="44" fill="url(#glow)" />
+  <rect x="0" y="0" width="200" height="200" rx="44" fill="url(#vignette)" />
   <ellipse cx="100" cy="173" rx="44" ry="7" fill="url(#shadow)" />
 
   <!-- top nub -->
@@ -43,4 +44,7 @@
     <rect x="79.5" y="131.5" width="7" height="22" rx="2" />
   </g>
   <circle cx="122" cy="142" r="8" fill="#e8935a" />
+
+  <!-- sparkle accent -->
+  <path d="M 156 36 L 161 49 L 174 54 L 161 59 L 156 72 L 151 59 L 138 54 L 151 49 Z" fill="#fff3ea" opacity="0.9" />
 </svg>
