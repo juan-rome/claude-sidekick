@@ -38,8 +38,8 @@ const GLOW_COLORS = {
 
 export async function initJellyfish(canvas) {
   camera = new THREE.PerspectiveCamera(32, 1, 1, 500);
-  camera.position.set(0, 6, 165);
-  camera.lookAt(0, -6, 0);
+  camera.position.set(0, 4, 185);
+  camera.lookAt(0, 0, 0);
 
   scene = new THREE.Scene();
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -82,12 +82,23 @@ function buildBell() {
 
 function buildEyes() {
   const eyeGeometry = new THREE.CircleGeometry(3.2, 16);
-  const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x2a1c3a, depthTest: false });
+  // transparent:true (even at full opacity) puts these in the same
+  // back-to-front render pass as the translucent bell instead of the
+  // opaque pass, which runs *before* transparent objects — without this,
+  // the bell painted over the eyes afterward and washed them out.
+  const eyeMaterial = new THREE.MeshBasicMaterial({
+    color: 0x2a1c3a,
+    transparent: true,
+    opacity: 1,
+    depthTest: false,
+  });
 
   eyeL = new THREE.Mesh(eyeGeometry, eyeMaterial.clone());
   eyeL.position.set(-9, 14, 33);
+  eyeL.renderOrder = 1;
   eyeR = new THREE.Mesh(eyeGeometry, eyeMaterial.clone());
   eyeR.position.set(9, 14, 33);
+  eyeR.renderOrder = 1;
   scene.add(eyeL, eyeR);
 }
 
