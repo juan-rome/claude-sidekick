@@ -68,9 +68,11 @@ export async function initGadget(canvas) {
   requestAnimationFrame(tick);
 }
 
+let bodyMaterial;
+
 function buildBody() {
   const geometry = new RoundedBoxGeometry(34, 50, 12, 4, 5);
-  const material = new THREE.MeshPhysicalMaterial({
+  bodyMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xf3effc,
     transparent: true,
     opacity: 0.55,
@@ -80,7 +82,7 @@ function buildBody() {
     emissive: 0x9a6fd8,
     emissiveIntensity: 0.06,
   });
-  const body = new THREE.Mesh(geometry, material);
+  const body = new THREE.Mesh(geometry, bodyMaterial);
   shell.add(body);
 
   // The little raised nub on top edge, seen on the reference device.
@@ -253,52 +255,80 @@ function tick(now) {
   renderer.render(scene, camera);
 }
 
-function speedForState() {
-  switch (state) {
-    case 'working':
-      return 5;
-    case 'success':
-    case 'poke':
-      return 6;
-    case 'error':
-      return 8;
-    default:
-      return 1.4;
-  }
-}
-
+/**
+ * Every reactive state is a curve keyed off `t` (seconds since the state
+ * started) that returns to a clean rest pose on its own, rather than a
+ * continuous sine whose frequency jumps the instant the state changes
+ * (the earlier version did that, and the jump between frequencies plus
+ * the abrupt snap of gaze-rotation back to zero is what read as "odd").
+ * `Math.sin(Math.min(t / duration, 1) * Math.PI)` is the shared trick: it
+ * rises from 0, peaks, and returns to exactly 0 by `duration`, then stays
+ * there, so the pose is guaranteed to settle instead of getting cut off
+ * mid-motion when the hold timer reverts the state to idle.
+ */
 function animateShell(elapsed) {
-  const sinceState = elapsed - stateStartedAt;
-  const bob = Math.sin(elapsed * speedForState()) * (state === 'idle' ? 1.5 : 2.5);
-  shell.position.y = bob;
+  const t = elapsed - stateStartedAt;
 
   // Gaze drift toward the cursor is this character's signature trait, but
-  // only while it isn't already busy expressing a reaction.
+  // only while it isn't already busy expressing a reaction. Always easing
+  // toward a target (0 when not tracking) instead of hard-setting it keeps
+  // this from snapping the instant a reaction interrupts the gaze.
   const trackCursor = state === 'idle' || state === 'working';
   const targetRotY = trackCursor ? lookX * 0.35 : 0;
   const targetRotX = trackCursor ? -lookY * 0.2 : 0;
-
-  let extraRotZ = 0;
-  let extraScale = 1;
-  if (state === 'error') {
-    extraRotZ = Math.sin(sinceState * 30) * Math.max(0.12 - sinceState * 0.08, 0);
-  }
-  if (state === 'success' || state === 'poke' || state === 'greet') {
-    const pop = Math.max(1 - sinceState * 2.2, 0);
-    extraScale = 1 + pop * 0.12;
-    extraRotZ = Math.sin(sinceState * 14) * pop * 0.1;
-  }
-  if (state === 'goodbye') {
-    const settle = Math.min(sinceState / 1.2, 1);
-    shell.position.y -= settle * 3;
-    shell.scale.setScalar(1 - settle * 0.08);
-  } else {
-    shell.scale.setScalar(extraScale);
-  }
-
   shell.rotation.y += (targetRotY - shell.rotation.y) * 0.08;
   shell.rotation.x += (targetRotX - shell.rotation.x) * 0.08;
-  shell.rotation.z = extraRotZ;
+
+  let y = 0;
+  let scale = 1;
+  let rotZ = 0;
+
+  switch (state) {
+    case 'working':
+      y = Math.sin(elapsed * 2.4) * 1;
+      rotZ = Math.sin(elapsed * 2.4) * 0.04;
+      break;
+    case 'greet': {
+      const hump = Math.sin(Math.min(t / 0.6, 1) * Math.PI);
+      y = -8 * hump;
+      scale = 1 + 0.08 * hump;
+      break;
+    }
+    case 'success': {
+      const hump = Math.sin(Math.min(t / 0.5, 1) * Math.PI);
+      y = -10 * hump;
+      scale = 1 + 0.1 * hump;
+      break;
+    }
+    case 'poke': {
+      const progress = Math.min(t / 0.4, 1);
+      const hump = Math.sin(progress * Math.PI);
+      y = -6 * hump;
+      scale = 1 + 0.14 * hump;
+      rotZ = Math.sin(progress * Math.PI * 2) * 0.06 * (1 - progress);
+      break;
+    }
+    case 'error': {
+      const envelope = Math.max(0, 1 - t / 0.45);
+      y = Math.sin(t * 40) * 1.5 * envelope;
+      rotZ = Math.sin(t * 40) * 0.12 * envelope;
+      break;
+    }
+    case 'goodbye': {
+      const settle = Math.min(t / 1.2, 1);
+      y = -settle * 3;
+      scale = 1 - settle * 0.08;
+      bodyMaterial.opacity = 0.55 * (1 - settle * 0.4);
+      break;
+    }
+    default: // idle
+      y = Math.sin(elapsed * 1.4) * 1.5;
+  }
+
+  if (state !== 'goodbye') bodyMaterial.opacity = 0.55;
+  shell.position.y = y;
+  shell.scale.setScalar(scale);
+  shell.rotation.z = rotZ;
 }
 
 function animateFace(elapsed) {
