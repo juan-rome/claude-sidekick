@@ -15,6 +15,7 @@ const HOOK_EVENTS = [
   { name: 'PostToolUseFailure', matcher: '*' },
   { name: 'Stop', matcher: null },
   { name: 'SessionEnd', matcher: null },
+  { name: 'Notification', matcher: null },
 ];
 
 function settingsPath() {

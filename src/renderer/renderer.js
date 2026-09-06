@@ -19,13 +19,16 @@ let pokeRevertTimer = null;
 const POKE_HOLD_MS = 1500;
 
 /** No line for idle/working: idle is the resting state (a bubble there
- *  would just be noise), and working fires on every single tool call, so
- *  giving it a line would mean one popping up constantly while a session
- *  runs. Every other, occasional state gets a one-word reaction. */
+ *  would just be noise), and working now covers every tool call (both
+ *  Pre- and PostToolUse), so giving it a line would mean one popping up
+ *  constantly while a session runs. Every other, occasional state gets
+ *  a one-word reaction — including question, which just holds up its
+ *  line for as long as the state itself holds. */
 const BUBBLE_TEXT = {
   greet: 'Hi!',
   success: 'Done!',
   error: 'Oops!',
+  question: 'Hm?',
   goodbye: 'Bye!',
   poke: 'Hehe!',
 };

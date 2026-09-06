@@ -228,9 +228,9 @@ function buildAmbientMotes() {
 }
 
 function updateAmbientMotes(elapsed, dt) {
-  // Visible while idle/working (calm states); fade out for busier
-  // reactions so they don't compete with a burst/trail/drops.
-  const shouldShow = currentState === 'idle' || currentState === 'working';
+  // Visible while idle/working/question (calm states); fade out for
+  // busier reactions so they don't compete with a burst/trail/drops.
+  const shouldShow = currentState === 'idle' || currentState === 'working' || currentState === 'question';
 
   ambientMotes.forEach((m) => {
     const target = shouldShow ? m.maxOpacity : 0;

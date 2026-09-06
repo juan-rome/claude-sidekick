@@ -42,6 +42,7 @@ const GLOW_COLORS = {
   error: '#f2879b',
   goodbye: '#7de0c0',
   poke: '#f0c76f',
+  question: '#6fb8e8',
 };
 
 export async function initGadget(canvas) {
@@ -164,6 +165,18 @@ function drawFace(mood, blink) {
   ctx.shadowColor = ctx.strokeStyle;
   ctx.shadowBlur = 14;
 
+  if (mood === 'question') {
+    // The screen displaying an actual question mark, rather than an
+    // eyes-and-mouth expression, since this is the one mood a device
+    // with a screen can show more directly than any of the others.
+    ctx.font = '700 68px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('?', w / 2, h * 0.5);
+    faceTexture.needsUpdate = true;
+    return;
+  }
+
   const cx = w / 2;
   const eyeY = h * 0.42;
   const eyeDx = 26;
@@ -280,7 +293,7 @@ function animateShell(elapsed) {
   // only while it isn't already busy expressing a reaction. Always easing
   // toward a target (0 when not tracking) instead of hard-setting it keeps
   // this from snapping the instant a reaction interrupts the gaze.
-  const trackCursor = state === 'idle' || state === 'working';
+  const trackCursor = state === 'idle' || state === 'working' || state === 'question';
   const targetRotY = trackCursor ? lookX * 0.35 : 0;
   const targetRotX = trackCursor ? -lookY * 0.2 : 0;
   shell.rotation.y += (targetRotY - shell.rotation.y) * 0.08;
@@ -328,6 +341,13 @@ function animateShell(elapsed) {
       bodyMaterial.opacity = BASE_OPACITY * (1 - settle * 0.4);
       break;
     }
+    case 'question':
+      // Idle's bob plus a slow head-tilt loop, since this can hold for a
+      // while (no fixed duration, unlike every other reactive state) and
+      // a static hold would read as frozen rather than "waiting on you".
+      y = Math.sin(elapsed * 1.4) * 1.5;
+      rotZ = Math.sin(elapsed * 0.8) * 0.07;
+      break;
     default: // idle
       y = Math.sin(elapsed * 1.4) * 1.5;
   }

@@ -34,6 +34,7 @@ const GLOW_COLORS = {
   error: 0xe07d8f,
   goodbye: 0x9a6fd8,
   poke: 0xf0c76f,
+  question: 0x6fb8e8,
 };
 
 export async function initJellyfish(canvas) {
@@ -155,6 +156,8 @@ function pulseSpeedForState() {
       return 1.6;
     case 'goodbye':
       return 1.2;
+    case 'question':
+      return 1.3;
     default:
       return 2;
   }
@@ -194,6 +197,7 @@ function animateTentacles(elapsed) {
 function animateFace(elapsed) {
   const blink = state === 'idle' && Math.sin(elapsed * 0.6) > 0.985;
 
+  let scaleX = 1;
   let scaleY = 1;
   let offsetY = 0;
   if (state === 'success' || state === 'poke') {
@@ -201,11 +205,17 @@ function animateFace(elapsed) {
     offsetY = 1.5;
   } else if (state === 'error') {
     scaleY = 1.3;
+  } else if (state === 'question') {
+    // Round and wide rather than error's tall oval, so "curious" and
+    // "startled" don't read as the same face.
+    scaleX = 1.25;
+    scaleY = 1.25;
   } else if (blink) {
     scaleY = 0.1;
   }
 
   [eyeL, eyeR].forEach((eye) => {
+    eye.scale.x = scaleX;
     eye.scale.y = scaleY;
     eye.position.y = 14 + offsetY;
   });

@@ -25,18 +25,28 @@ Claude Code can run arbitrary shell commands or HTTP requests in response
 to session events ("hooks"). Sidekick runs a tiny local HTTP server and
 maps incoming hook events to an animation state:
 
-| Hook event          | Sidekick state |
-| -------------------- | -------------- |
-| `SessionStart`        | greet          |
-| `PreToolUse`          | working        |
-| `PostToolUse`         | success        |
-| `PostToolUseFailure`  | error          |
-| `Stop`                | idle           |
-| `SessionEnd`          | goodbye        |
+| Hook event                       | Sidekick state |
+| --------------------------------- | -------------- |
+| `SessionStart`                     | greet          |
+| `PreToolUse` / `PostToolUse`       | working        |
+| `PostToolUseFailure`               | error          |
+| `Notification` (waiting on you)    | question       |
+| `Stop`                             | success        |
+| `SessionEnd`                       | goodbye        |
+
+`PostToolUse` fires after *every* successful tool call, dozens of times
+a turn, so it folds into `working` rather than triggering its own
+celebration each time — `Stop`, which fires once when Claude actually
+finishes responding, is the real "done" moment. `Notification` covers
+permission prompts, idle timeouts, and MCP dialogs; Sidekick only reacts
+to the subtypes that actually mean "waiting on you" (not things like
+`auth_success`).
 
 Reactive states (everything but idle/working) automatically settle back
 to idle a couple of seconds after firing, so the character never gets
-stuck mid-reaction.
+stuck mid-reaction — except question, which holds until a real event
+replaces it, since "waiting on you" can last a lot longer than a
+couple of seconds.
 
 All of that runs on the same shared WebGPU accent layer (Three.js's
 `WebGPURenderer` on a transparent canvas over whichever SVG character is
@@ -46,8 +56,11 @@ active, WebGL2 fallback automatic where WebGPU isn't available):
 - **Poke**: a soft gray "poof" puff.
 - **Error**: a couple of worried blue drops falling.
 - **Working**: a light sparkle trail orbiting the character.
-- **Idle/working**: a handful of faint ambient motes drifting nearby,
-  fading out for busier states so they don't compete with a burst.
+- **Idle/working/question**: a handful of faint ambient motes drifting
+  nearby, fading out for busier states so they don't compete with a burst.
+
+Every reactive state but working also pops a short speech bubble above
+the character: "Hi!", "Done!", "Oops!", "Hm?", "Bye!", "Hehe!" on poke.
 
 A full 3D redesign of the ghost and bunny (procedural Three.js primitives
 instead of SVG) was prototyped and set aside: it looked like a 3D
@@ -75,6 +88,11 @@ running so it picks up the new hooks.
 
 Once installed, the menu bar icon switches to the full menu: show/hide
 the character, switch characters, or quit.
+
+If you installed Sidekick before the `Notification` hook (the "waiting
+on you" question state) was added, click **Install Hooks to Get
+Started** again — it's a no-op for events you already have and just
+adds the one that's missing.
 
 ### Setting hooks up by hand
 
@@ -110,6 +128,9 @@ yourself to forward the relevant events:
       { "hooks": [{ "type": "http", "url": "http://127.0.0.1:8934/hook", "timeout": 2 }] }
     ],
     "SessionEnd": [
+      { "hooks": [{ "type": "http", "url": "http://127.0.0.1:8934/hook", "timeout": 2 }] }
+    ],
+    "Notification": [
       { "hooks": [{ "type": "http", "url": "http://127.0.0.1:8934/hook", "timeout": 2 }] }
     ]
   }

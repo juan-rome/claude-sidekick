@@ -254,6 +254,35 @@ body {
   }
 }
 
+/* --- question: waiting on you, can hold a while so it's a slow loop
+   rather than a one-shot, unlike every other reactive state --- */
+.state-question .blob {
+  animation: question-tilt 2.6s ease-in-out infinite;
+}
+
+.state-question .eye {
+  height: 16px;
+  transform: scale(1.15);
+}
+
+.state-question .mouth {
+  width: 8px;
+  height: 8px;
+  border: 2px solid #1c2b28;
+  border-radius: 50%;
+  background: transparent;
+}
+
+@keyframes question-tilt {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
 /* --- goodbye: settle, droop, fade slightly --- */
 .state-goodbye .blob {
   animation: goodbye-settle 1.2s ease-in forwards;
@@ -302,6 +331,10 @@ body {
 
 .state-error #char-ghost .char-body {
   animation: ghost-flinch 0.5s ease-in-out;
+}
+
+.state-question #char-ghost .char-body {
+  animation: ghost-question 2.6s ease-in-out infinite;
 }
 
 .state-goodbye #char-ghost .char-body {
@@ -389,6 +422,16 @@ body {
   }
 }
 
+@keyframes ghost-question {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-6deg);
+  }
+}
+
 @keyframes ghost-fade-away {
   0% {
     transform: translateY(0) scale(1);
@@ -456,6 +499,10 @@ body {
   transform: scaleY(0.25) translateY(5px);
 }
 
+.state-question .ghost-eye {
+  transform: scale(1.22);
+}
+
 .state-greet .ghost-mouth {
   transform: scale(1.25);
 }
@@ -478,6 +525,10 @@ body {
 
 .state-poke .ghost-mouth {
   transform: scale(1.45);
+}
+
+.state-question .ghost-mouth {
+  transform: scale(0.6);
 }
 
 /* Arms: ghost's own expressive channel for greet, same idea as bunny's
@@ -538,6 +589,10 @@ body {
 
 .state-error #char-bunny .char-body {
   animation: bunny-cower 0.5s ease-in-out;
+}
+
+.state-question #char-bunny .char-body {
+  animation: bunny-question 2.6s ease-in-out infinite;
 }
 
 .state-goodbye #char-bunny .char-body {
@@ -607,6 +662,16 @@ body {
   }
 }
 
+@keyframes bunny-question {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
 @keyframes bunny-sleepy {
   0% {
     transform: scale(1);
@@ -660,12 +725,20 @@ body {
   transform: scaleY(0.2) translateY(5px);
 }
 
+.state-question .bunny-eye {
+  transform: scale(1.15);
+}
+
 .state-success .bunny-mouth {
   transform: scale(1.4);
 }
 
 .state-error .bunny-mouth {
   transform: scale(0.6) translateY(2px);
+}
+
+.state-question .bunny-mouth {
+  transform: scale(0.6);
 }
 
 .state-poke .bunny-mouth {
@@ -765,6 +838,17 @@ body {
 
 .state-error .bunny-ear-r {
   transform: rotate(-38deg) scaleY(0.85);
+}
+
+/* One ear cocked up, the other relaxed: the classic curious-rabbit
+   tell, and it reads as "question" at a glance even with the body
+   otherwise doing the same slow tilt loop as idle. */
+.state-question .bunny-ear-l {
+  transform: rotate(-16deg);
+}
+
+.state-question .bunny-ear-r {
+  transform: rotate(10deg) scaleY(1.06);
 }
 
 .state-goodbye .bunny-ear-l {

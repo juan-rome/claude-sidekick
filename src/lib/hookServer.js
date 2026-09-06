@@ -9,9 +9,10 @@ const DEFAULT_PORT = 8934;
  * of request (a JSON hook payload on the configured path) from localhost.
  *
  * `onState(state)` fires whenever the mapped state changes. Reactive
- * states (anything but 'idle'/'working') automatically revert to 'idle'
- * after REACTION_HOLD_MS so the character doesn't get stuck mid-reaction
- * if no further hook events arrive.
+ * states (anything but 'idle'/'working'/'question') automatically
+ * revert to 'idle' after REACTION_HOLD_MS so the character doesn't get
+ * stuck mid-reaction if no further hook events arrive. 'question' holds
+ * instead, since "waiting on you" can outlast a normal reaction by a lot.
  */
 function startHookServer({ port = DEFAULT_PORT, onState } = {}) {
   let revertTimer = null;
@@ -22,7 +23,10 @@ function startHookServer({ port = DEFAULT_PORT, onState } = {}) {
       revertTimer = null;
     }
     onState(state);
-    if (state !== 'idle' && state !== 'working') {
+    // question is excluded too: "waiting on you" (a permission prompt,
+    // an idle timeout) can last far longer than a normal reaction hold,
+    // so it stays up until the next real event replaces it.
+    if (state !== 'idle' && state !== 'working' && state !== 'question') {
       revertTimer = setTimeout(() => onState('idle'), REACTION_HOLD_MS);
     }
   }
