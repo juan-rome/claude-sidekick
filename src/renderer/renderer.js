@@ -1,5 +1,10 @@
+import { initParticles, burst } from './particles.js';
+
 const stage = document.getElementById('stage');
 const characters = document.querySelectorAll('.character');
+const effectsCanvas = document.getElementById('effects-canvas');
+
+initParticles(effectsCanvas);
 
 let currentState = 'idle';
 let pokeRevertTimer = null;
@@ -8,6 +13,7 @@ const POKE_HOLD_MS = 1500;
 function setState(state) {
   currentState = state;
   stage.className = `state-${state}`;
+  if (state === 'success') burst();
 }
 
 function setCharacter(character) {

@@ -28,6 +28,10 @@ Reactive states (everything but idle/working) automatically settle back
 to idle a couple of seconds after firing, so the character never gets
 stuck mid-reaction.
 
+Success also triggers a small WebGPU-rendered confetti burst (Three.js's
+`WebGPURenderer`, layered on a transparent canvas over the SVG character),
+with automatic fallback to WebGL2 on hardware that doesn't support WebGPU.
+
 ## Setup
 
 ### 1. Install and run Sidekick
@@ -92,6 +96,11 @@ npm test
 ## What's next
 
 - More characters.
+- More WebGPU effects (a glow/aura, a particle trail while working) —
+  the full 3D-model route (replacing the SVG art with rigged 3D
+  characters) was scoped and set aside as its own separate undertaking,
+  comparable in size to the Live2D path below; what shipped instead is
+  lightweight effects layered on top of the existing 2D art.
 - Live2D-quality rigged animation was scoped and deliberately set aside
   for now (it needs pre-layered source art plus a real rigging pass in
   Cubism Editor, a much bigger lift than this project's scope); the

@@ -27,5 +27,8 @@
       "src/**/*",
       "package.json"
     ]
+  },
+  "dependencies": {
+    "three": "^0.185.1"
   }
 }
