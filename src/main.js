@@ -15,6 +15,7 @@ const CHARACTERS = [
   { id: 'blob', label: 'Blob' },
   { id: 'ghost', label: 'Ghost' },
   { id: 'bunny', label: 'Bunny' },
+  { id: 'jellyfish', label: 'Jellyfish' },
 ];
 
 function getCharacter() {

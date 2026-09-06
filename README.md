@@ -6,8 +6,14 @@ succeeds, looks worried when one fails, and greets/waves goodbye at the
 start and end of a session. No pixel art, a soft, rounded, animated
 character that lives wherever you drag it on screen.
 
-Three characters ship today: a blob, a ghost, and a bunny. Pick one from
-the tray icon's Character submenu.
+Four characters ship today: a blob, a ghost, a bunny, and a jellyfish.
+Pick one from the tray icon's Character submenu.
+
+The first three are SVG/CSS. The jellyfish is different: it's rendered
+entirely with Three.js's `WebGPURenderer` rather than SVG, a translucent
+glowing bell (built procedurally from half a sphere, no 3D modeling
+software involved) that pulses like it's swimming, with tentacles that
+sway via a wave curve recomputed every frame.
 
 ## How it works
 

@@ -1,10 +1,13 @@
 import { initParticles, burst } from './particles.js';
+import { initJellyfish, setJellyfishState } from './jellyfish.js';
 
 const stage = document.getElementById('stage');
 const characters = document.querySelectorAll('.character');
 const effectsCanvas = document.getElementById('effects-canvas');
+const jellyfishCanvas = document.getElementById('char-jellyfish');
 
 initParticles(effectsCanvas);
+initJellyfish(jellyfishCanvas);
 
 let currentState = 'idle';
 let pokeRevertTimer = null;
@@ -13,6 +16,7 @@ const POKE_HOLD_MS = 1500;
 function setState(state) {
   currentState = state;
   stage.className = `state-${state}`;
+  setJellyfishState(state);
   if (state === 'success') burst();
 }
 
