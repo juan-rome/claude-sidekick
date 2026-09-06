@@ -1,0 +1,191 @@
+/* Overrides styles.css's html/body sizing, which is built for the
+   160x160 always-on-top companion window, not this normal-sized one. */
+html,
+body {
+  width: auto;
+  height: auto;
+  overflow: visible;
+  cursor: default;
+  background: #14111d;
+  color: #f3eefb;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.gallery-page {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #b98fe8;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+header p {
+  margin: 2px 0 0;
+  color: #a99bc4;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.card {
+  background: #1d1929;
+  border: 1px solid #322b47;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 18px 40px -24px rgba(20, 10, 40, 0.5);
+}
+
+.menubar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 12px;
+  border-bottom: 1px solid #322b47;
+  margin-bottom: 16px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dot-1 {
+  background: #f2879b;
+  opacity: 0.7;
+}
+.dot-2 {
+  background: #f0c76f;
+  opacity: 0.7;
+}
+.dot-3 {
+  background: #7de0c0;
+  opacity: 0.7;
+}
+
+.menubar-label {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: #756a8f;
+}
+
+.stage-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 320px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 38%, #241f36, #16131f 78%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.stage-scaler {
+  width: 160px;
+  height: 160px;
+  transform: scale(2);
+}
+
+.tap-hint {
+  text-align: center;
+  font-size: 11.5px;
+  color: #756a8f;
+  margin: 10px 0 0;
+}
+
+.row-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #756a8f;
+  margin: 18px 0 8px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid #322b47;
+  background: #262032;
+  color: #f3eefb;
+  font: 500 13px/1 -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 9px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chip .swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: #b98fe8;
+  background: #322450;
+}
+
+.swatch-blob {
+  background: #4fb8a8;
+}
+.swatch-ghost {
+  background: #7a68b0;
+}
+.swatch-bunny {
+  background: #d9a06a;
+}
+.swatch-jellyfish {
+  background: #b98fe8;
+}
+.swatch-gadget {
+  background: #f0a35a;
+}
+
+.chip.state-greet[aria-pressed='true'] {
+  border-color: #b98fe8;
+}
+.chip.state-working[aria-pressed='true'] {
+  border-color: #f0c76f;
+}
+.chip.state-success[aria-pressed='true'] {
+  border-color: #7de0c0;
+}
+.chip.state-error[aria-pressed='true'] {
+  border-color: #f2879b;
+}
+.chip.state-question[aria-pressed='true'] {
+  border-color: #6fb8e8;
+}

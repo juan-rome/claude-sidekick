@@ -8,6 +8,7 @@ const { areHooksInstalled, installHooks, settingsPath } = require('./lib/hooksIn
 
 let tray;
 let sidekickWindow;
+let galleryWindow;
 let hookServer;
 let dragOrigin = null;
 let hooksReady = false;
@@ -88,6 +89,32 @@ function createSidekickWindow() {
   });
 }
 
+/**
+ * A normal, titled window (unlike the frameless always-on-top sidekick
+ * one) showing every character and state side by side, for picking a
+ * character or just seeing what a state looks like without waiting for
+ * Claude Code to trigger it. Reuses the exact same character modules as
+ * the real widget rather than a separate copy, so it can't drift out of
+ * sync with what actually ships.
+ */
+function openGalleryWindow() {
+  if (galleryWindow && !galleryWindow.isDestroyed()) {
+    galleryWindow.show();
+    galleryWindow.focus();
+    return;
+  }
+
+  galleryWindow = new BrowserWindow({
+    width: 480,
+    height: 780,
+    title: 'Sidekick Character Viewer',
+  });
+  galleryWindow.loadFile(path.join(__dirname, 'renderer', 'gallery.html'));
+  galleryWindow.on('closed', () => {
+    galleryWindow = null;
+  });
+}
+
 function createTray() {
   if (!tray) {
     const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'tray-icon.png'));
@@ -104,6 +131,8 @@ function createTray() {
     tray.setContextMenu(
       Menu.buildFromTemplate([
         { label: 'Install Hooks to Get Started', click: runInstallHooks },
+        { type: 'separator' },
+        { label: 'Character Viewer...', click: openGalleryWindow },
         { type: 'separator' },
         { label: 'Quit Claude Sidekick', click: () => app.quit() },
       ])
@@ -129,6 +158,7 @@ function createTray() {
           click: () => setCharacter(id),
         })),
       },
+      { label: 'Character Viewer...', click: openGalleryWindow },
       { type: 'separator' },
       { label: 'Quit Claude Sidekick', click: () => app.quit() },
     ])

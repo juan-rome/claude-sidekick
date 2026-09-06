@@ -29,7 +29,7 @@ const POKE_HOLD_MS = 1500;
 const BUBBLE_TEXT = {
   greet: 'Hi!',
   error: 'Oops!',
-  question: 'Need input?',
+  question: 'What do you think?',
   goodbye: 'Bye!',
   poke: 'Hehe!',
 };

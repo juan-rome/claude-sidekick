@@ -7,7 +7,12 @@ start and end of a session. No pixel art, a soft, rounded, animated
 character that lives wherever you drag it on screen.
 
 Five characters ship today: a blob, a ghost, a bunny, a jellyfish, and a
-gadget. Pick one from the tray icon's Character submenu.
+gadget. Pick one from the tray icon's Character submenu, or open
+**Character Viewer...** from the same menu for a normal window that
+shows every character and every state side by side, manually triggered
+instead of waiting for Claude Code to fire the real hook events. It
+imports the exact same character modules as the widget itself, so it
+can't drift out of sync with what actually ships.
 
 The first three are SVG/CSS. The jellyfish and gadget are different:
 they're rendered entirely with Three.js's `WebGPURenderer` rather than
@@ -60,7 +65,7 @@ active, WebGL2 fallback automatic where WebGPU isn't available):
   nearby, fading out for busier states so they don't compete with a burst.
 
 Every reactive state but working and success also pops a short speech
-bubble above the character: "Hi!", "Oops!", "Need input?", "Bye!",
+bubble above the character: "Hi!", "Oops!", "What do you think?", "Bye!",
 "Hehe!" on poke. Success skips it too, since the confetti and happy
 face already say it.
 

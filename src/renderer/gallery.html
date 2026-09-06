@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Sidekick Character Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="gallery.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../../node_modules/three/build/three.webgpu.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="gallery-page">
+      <header>
+        <span class="eyebrow">Claude Sidekick</span>
+        <h1>Character Viewer</h1>
+        <p>The same characters and code that run in the real widget. Pick one, then a state, or click the character itself for a poke.</p>
+      </header>
+
+      <div class="card">
+        <div class="menubar">
+          <span class="dot dot-1"></span>
+          <span class="dot dot-2"></span>
+          <span class="dot dot-3"></span>
+          <span class="menubar-label" id="state-label">idle</span>
+        </div>
+
+        <div class="stage-frame">
+          <div class="stage-scaler">
+            <div id="stage" class="state-idle">
+              <div id="char-blob" class="character blob-wrap active">
+                <div class="blob">
+                  <div class="eye eye-left"></div>
+                  <div class="eye eye-right"></div>
+                  <div class="mouth"></div>
+                </div>
+              </div>
+
+              <canvas id="char-jellyfish" class="character" width="160" height="160"></canvas>
+
+              <canvas id="char-gadget" class="character" width="160" height="160"></canvas>
+
+              <svg id="char-ghost" class="character" viewBox="0 0 160 160" width="160" height="160">
+                <defs>
+                  <radialGradient id="eyeShineGhost" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+                <g transform="translate(80,16) scale(0.68) translate(-180,-120)">
+                  <g class="char-body">
+                    <path
+                      class="ghost-body"
+                      d="M 110 195 A 70 70 0 0 1 250 195 L 250 290
+                         A 17.5 17.5 0 0 1 215 290
+                         A 17.5 17.5 0 0 1 180 290
+                         A 17.5 17.5 0 0 1 145 290
+                         A 17.5 17.5 0 0 1 110 290 Z"
+                      fill="#ded4f7"
+                    />
+                    <path
+                      d="M 138 250 Q 133 200 180 195 Q 227 200 222 250 Q 208 278 180 280 Q 152 278 138 250 Z"
+                      fill="#bda8e8"
+                      opacity="0.5"
+                    />
+                    <ellipse cx="153" cy="200" rx="26" ry="18" fill="#ffffff" opacity="0.55" />
+                    <ellipse cx="140" cy="205" rx="10" ry="6" fill="#f2879b" opacity="0.5" />
+                    <ellipse cx="220" cy="205" rx="10" ry="6" fill="#f2879b" opacity="0.5" />
+
+                    <g class="ghost-eye ghost-eye-l">
+                      <ellipse cx="157" cy="188" rx="13" ry="16" fill="#2a2140" />
+                      <ellipse cx="157" cy="192" rx="9" ry="11" fill="#7a68b0" />
+                      <circle cx="152" cy="182" r="5.5" fill="url(#eyeShineGhost)" />
+                      <circle cx="161" cy="197" r="2" fill="#ffffff" opacity="0.85" />
+                    </g>
+                    <g class="ghost-eye ghost-eye-r">
+                      <ellipse cx="203" cy="188" rx="13" ry="16" fill="#2a2140" />
+                      <ellipse cx="203" cy="192" rx="9" ry="11" fill="#7a68b0" />
+                      <circle cx="198" cy="182" r="5.5" fill="url(#eyeShineGhost)" />
+                      <circle cx="207" cy="197" r="2" fill="#ffffff" opacity="0.85" />
+                    </g>
+
+                    <ellipse class="ghost-mouth" cx="180" cy="222" rx="8" ry="10" fill="#2a2140" opacity="0.85" />
+                    <ellipse cx="180" cy="226" rx="5" ry="4" fill="#7a68b0" />
+
+                    <ellipse class="ghost-arm ghost-arm-l" cx="117" cy="230" rx="12" ry="9" fill="#ded4f7" />
+                    <ellipse class="ghost-arm ghost-arm-r" cx="243" cy="230" rx="12" ry="9" fill="#ded4f7" />
+                  </g>
+                </g>
+              </svg>
+
+              <svg id="char-bunny" class="character" viewBox="0 0 160 160" width="160" height="160">
+                <defs>
+                  <radialGradient id="eyeShineBunny" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+                <g transform="translate(80,4) scale(0.58) translate(-180,-78)">
+                  <g class="char-body">
+                    <g class="bunny-ear bunny-ear-l">
+                      <path d="M 145 220 Q 110 110 148 88 Q 172 78 172 130 Q 172 175 165 225 Z" fill="#f3ede2" />
+                      <path d="M 150 210 Q 128 130 150 105 Q 162 100 162 135 Q 162 172 158 214 Z" fill="#f2a9bb" />
+                      <path
+                        d="M 148 200 Q 132 140 150 112"
+                        fill="none"
+                        stroke="#d9cfbd"
+                        stroke-width="4"
+                        opacity="0.5"
+                        stroke-linecap="round"
+                      />
+                    </g>
+                    <g class="bunny-ear bunny-ear-r">
+                      <path d="M 215 220 Q 250 110 212 88 Q 188 78 188 130 Q 188 175 195 225 Z" fill="#f3ede2" />
+                      <path d="M 210 210 Q 232 130 210 105 Q 198 100 198 135 Q 198 172 202 214 Z" fill="#f2a9bb" />
+                      <path
+                        d="M 212 200 Q 228 140 210 112"
+                        fill="none"
+                        stroke="#d9cfbd"
+                        stroke-width="4"
+                        opacity="0.5"
+                        stroke-linecap="round"
+                      />
+                    </g>
+
+                    <circle class="bunny-body" cx="180" cy="270" r="66" fill="#f3ede2" />
+                    <ellipse cx="180" cy="296" rx="56" ry="34" fill="#fffaf0" />
+                    <path d="M 116 280 l -10 -6 l 3 12 Z" fill="#f3ede2" />
+                    <path d="M 244 280 l 10 -6 l -3 12 Z" fill="#f3ede2" />
+
+                    <ellipse cx="140" cy="288" rx="12" ry="7" fill="#f2879b" opacity="0.55" />
+                    <ellipse cx="220" cy="288" rx="12" ry="7" fill="#f2879b" opacity="0.55" />
+
+                    <g class="bunny-eye bunny-eye-l">
+                      <ellipse cx="155" cy="268" rx="12" ry="15" fill="#2a1c14" />
+                      <ellipse cx="155" cy="272" rx="8" ry="10" fill="#8a5a36" />
+                      <circle cx="151" cy="263" r="5" fill="url(#eyeShineBunny)" />
+                      <circle cx="159" cy="276" r="1.8" fill="#ffffff" opacity="0.85" />
+                    </g>
+                    <g class="bunny-eye bunny-eye-r">
+                      <ellipse cx="205" cy="268" rx="12" ry="15" fill="#2a1c14" />
+                      <ellipse cx="205" cy="272" rx="8" ry="10" fill="#8a5a36" />
+                      <circle cx="201" cy="263" r="5" fill="url(#eyeShineBunny)" />
+                      <circle cx="209" cy="276" r="1.8" fill="#ffffff" opacity="0.85" />
+                    </g>
+
+                    <ellipse cx="180" cy="292" rx="5" ry="4" fill="#e88fa0" />
+                    <rect x="174" y="298" width="6" height="9" rx="1.5" fill="#ffffff" stroke="#e3dccb" stroke-width="0.5" />
+                    <rect x="180" y="298" width="6" height="9" rx="1.5" fill="#ffffff" stroke="#e3dccb" stroke-width="0.5" />
+                    <path
+                      class="bunny-mouth"
+                      d="M 172 300 Q 180 306 188 300"
+                      fill="none"
+                      stroke="#8a5a36"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                    />
+                    <ellipse class="bunny-mouth-laugh" cx="180" cy="301" rx="9" ry="7" fill="#4a3226" />
+
+                    <line x1="120" y1="282" x2="92" y2="277" stroke="#c9bfa8" stroke-width="1.5" />
+                    <line x1="120" y1="290" x2="92" y2="292" stroke="#c9bfa8" stroke-width="1.5" />
+                    <line x1="240" y1="282" x2="268" y2="277" stroke="#c9bfa8" stroke-width="1.5" />
+                    <line x1="240" y1="290" x2="268" y2="292" stroke="#c9bfa8" stroke-width="1.5" />
+                  </g>
+                </g>
+              </svg>
+
+              <canvas id="effects-canvas" width="160" height="160"></canvas>
+
+              <div id="speech-bubble" class="speech-bubble">
+                <span id="bubble-text"></span>
+                <div class="speech-bubble-tail"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="tap-hint">click the character for a poke</p>
+
+        <div class="row-label">Character</div>
+        <div class="chip-row" id="character-row">
+          <button class="chip" data-character="blob" aria-pressed="true"><span class="swatch swatch-blob"></span>Blob</button>
+          <button class="chip" data-character="ghost" aria-pressed="false"><span class="swatch swatch-ghost"></span>Ghost</button>
+          <button class="chip" data-character="bunny" aria-pressed="false"><span class="swatch swatch-bunny"></span>Bunny</button>
+          <button class="chip" data-character="jellyfish" aria-pressed="false"><span class="swatch swatch-jellyfish"></span>Jellyfish</button>
+          <button class="chip" data-character="gadget" aria-pressed="false"><span class="swatch swatch-gadget"></span>Gadget</button>
+        </div>
+
+        <div class="row-label">State</div>
+        <div class="chip-row" id="state-row">
+          <button class="chip" data-state="idle" aria-pressed="true">Idle</button>
+          <button class="chip state-greet" data-state="greet" aria-pressed="false">Greet</button>
+          <button class="chip state-working" data-state="working" aria-pressed="false">Working</button>
+          <button class="chip state-success" data-state="success" aria-pressed="false">Success</button>
+          <button class="chip state-error" data-state="error" aria-pressed="false">Error</button>
+          <button class="chip state-question" data-state="question" aria-pressed="false">Question</button>
+          <button class="chip" data-state="goodbye" aria-pressed="false">Goodbye</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="gallery.js"></script>
+  </body>
+</html>
