@@ -10,6 +10,10 @@ import * as THREE from '../../node_modules/three/build/three.webgpu.js';
 import { RoundedBoxGeometry } from '../../node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 const SIZE = 160;
+// Fills more of the frame while staying well inside the camera's visible
+// half-height (~51 units at this distance/FOV) even with the nub and the
+// biggest reaction pop included.
+const BASE_SCALE = 1.4;
 
 let renderer;
 let scene;
@@ -327,7 +331,7 @@ function animateShell(elapsed) {
 
   if (state !== 'goodbye') bodyMaterial.opacity = 0.55;
   shell.position.y = y;
-  shell.scale.setScalar(scale);
+  shell.scale.setScalar(scale * BASE_SCALE);
   shell.rotation.z = rotZ;
 }
 
