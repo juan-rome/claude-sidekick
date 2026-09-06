@@ -3,6 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../../node_modules/three/build/three.webgpu.js"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="stage" class="state-idle">
@@ -15,6 +22,8 @@
       </div>
 
       <canvas id="char-jellyfish" class="character" width="160" height="160"></canvas>
+
+      <canvas id="char-gadget" class="character" width="160" height="160"></canvas>
 
       <svg id="char-ghost" class="character" viewBox="0 0 160 160" width="160" height="160">
         <defs>

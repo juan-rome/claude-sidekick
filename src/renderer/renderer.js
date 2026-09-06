@@ -1,13 +1,16 @@
 import { initParticles, burst, setParticleState } from './particles.js';
 import { initJellyfish, setJellyfishState } from './jellyfish.js';
+import { initGadget, setGadgetState, setGadgetLook } from './gadget.js';
 
 const stage = document.getElementById('stage');
 const characters = document.querySelectorAll('.character');
 const effectsCanvas = document.getElementById('effects-canvas');
 const jellyfishCanvas = document.getElementById('char-jellyfish');
+const gadgetCanvas = document.getElementById('char-gadget');
 
 initParticles(effectsCanvas);
 initJellyfish(jellyfishCanvas);
+initGadget(gadgetCanvas);
 
 let currentState = 'idle';
 let pokeRevertTimer = null;
@@ -17,6 +20,7 @@ function setState(state) {
   currentState = state;
   stage.className = `state-${state}`;
   setJellyfishState(state);
+  setGadgetState(state);
   setParticleState(state);
   if (state === 'success') burst();
 }
@@ -115,6 +119,20 @@ stage.addEventListener('mousemove', (event) => {
     handleGreet();
   }
 });
+
+/**
+ * The gadget character's signature trait: its gaze drifts toward the
+ * cursor. Harmless to compute even when another character is active,
+ * since gadget.js just holds the value until it's next drawn.
+ */
+stage.addEventListener('mousemove', (event) => {
+  const rect = stage.getBoundingClientRect();
+  const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+  setGadgetLook(nx, ny);
+});
+
+stage.addEventListener('mouseleave', () => setGadgetLook(0, 0));
 
 window.sidekick.onState(setState);
 window.sidekick.onCharacter(setCharacter);
