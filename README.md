@@ -1,7 +1,8 @@
 # Claude Sidekick
 
 *An independent personal project built with Claude Code. Not an official
-Anthropic product, and not affiliated with or endorsed by Anthropic.*
+Anthropic product, and not affiliated with or endorsed by Anthropic.
+All rights reserved; source is visible here but not licensed for reuse.*
 
 ![The five characters](docs/screenshots/characters.png)
 
