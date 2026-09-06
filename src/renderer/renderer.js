@@ -7,6 +7,8 @@ const characters = document.querySelectorAll('.character');
 const effectsCanvas = document.getElementById('effects-canvas');
 const jellyfishCanvas = document.getElementById('char-jellyfish');
 const gadgetCanvas = document.getElementById('char-gadget');
+const speechBubble = document.getElementById('speech-bubble');
+const bubbleText = document.getElementById('bubble-text');
 
 initParticles(effectsCanvas);
 initJellyfish(jellyfishCanvas);
@@ -16,12 +18,35 @@ let currentState = 'idle';
 let pokeRevertTimer = null;
 const POKE_HOLD_MS = 1500;
 
+/** No line for idle/working: idle is the resting state (a bubble there
+ *  would just be noise), and working fires on every single tool call, so
+ *  giving it a line would mean one popping up constantly while a session
+ *  runs. Every other, occasional state gets a one-word reaction. */
+const BUBBLE_TEXT = {
+  greet: 'Hi!',
+  success: 'Done!',
+  error: 'Oops!',
+  goodbye: 'Bye!',
+  poke: 'Hehe!',
+};
+
+function updateBubble(state) {
+  const text = BUBBLE_TEXT[state];
+  if (text) {
+    bubbleText.textContent = text;
+    speechBubble.classList.add('visible');
+  } else {
+    speechBubble.classList.remove('visible');
+  }
+}
+
 function setState(state) {
   currentState = state;
   stage.className = `state-${state}`;
   setJellyfishState(state);
   setGadgetState(state);
   setParticleState(state);
+  updateBubble(state);
   if (state === 'success') burst();
 }
 
