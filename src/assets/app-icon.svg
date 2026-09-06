@@ -1,0 +1,46 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#332b26" />
+      <stop offset="100%" stop-color="#1a1613" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#c15f3c" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#c15f3c" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="shellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbff" />
+      <stop offset="100%" stop-color="#d9d3ea" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="200" height="200" rx="44" fill="url(#bg)" />
+  <rect x="0" y="0" width="200" height="200" rx="44" fill="url(#glow)" />
+  <ellipse cx="100" cy="173" rx="44" ry="7" fill="url(#shadow)" />
+
+  <!-- top nub -->
+  <circle cx="126" cy="33" r="5" fill="url(#shellGrad)" />
+
+  <!-- shell -->
+  <rect x="55" y="32" width="90" height="132" rx="15" fill="url(#shellGrad)" />
+
+  <!-- screen bezel -->
+  <rect x="68" y="46" width="64" height="74" rx="8" fill="#141018" />
+
+  <!-- face: calm idle, mint glow -->
+  <g stroke="#7de0c0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M 78 76 L 86 68 L 94 76" />
+    <path d="M 106 76 L 114 68 L 122 76" />
+    <path d="M 88 92 Q 100 100 112 92" />
+  </g>
+
+  <!-- controls -->
+  <g fill="#2a2534">
+    <rect x="72" y="139" width="22" height="7" rx="2" />
+    <rect x="79.5" y="131.5" width="7" height="22" rx="2" />
+  </g>
+  <circle cx="122" cy="142" r="8" fill="#e8935a" />
+</svg>

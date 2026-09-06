@@ -1,10 +1,15 @@
 # Claude Sidekick
 
+![The five characters](docs/screenshots/characters.png)
+
 A small floating desktop companion that reacts in real time to your Claude
 Code sessions: it perks up when a tool call starts, celebrates when one
 succeeds, looks worried when one fails, and greets/waves goodbye at the
 start and end of a session. No pixel art, a soft, rounded, animated
-character that lives wherever you drag it on screen.
+character that lives wherever you drag it on screen. Click it for a poke;
+double-click it to bring back whatever app you were using before you
+clicked (Terminal, iTerm, VS Code, the Claude desktop app, whatever it
+was), since Claude Code doesn't have one single "window" to jump to.
 
 Five characters ship today: a blob, a ghost, a bunny, a jellyfish, and a
 gadget. Pick one from the tray icon's Character submenu, or open
@@ -13,6 +18,8 @@ shows every character and every state side by side, manually triggered
 instead of waiting for Claude Code to fire the real hook events. It
 imports the exact same character modules as the widget itself, so it
 can't drift out of sync with what actually ships.
+
+<img src="docs/screenshots/character-viewer.png" alt="The Character Viewer window" width="360">
 
 The first three are SVG/CSS. The jellyfish and gadget are different:
 they're rendered entirely with Three.js's `WebGPURenderer` rather than
@@ -52,6 +59,12 @@ to idle a couple of seconds after firing, so the character never gets
 stuck mid-reaction, except question, which holds until a real event
 replaces it, since "waiting on you" can last a lot longer than a
 couple of seconds.
+
+**Supports one Claude Code session at a time.** There's a single hook
+server and a single character state; running two sessions at once means
+both drive the same character, so an error from one can interrupt a
+success animation from the other. This is also noted (disabled, for
+visibility) in the tray's Settings submenu.
 
 All of that runs on the same shared WebGPU accent layer (Three.js's
 `WebGPURenderer` on a transparent canvas over whichever SVG character is

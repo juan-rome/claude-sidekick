@@ -71,6 +71,33 @@ function handlePoke() {
   }, POKE_HOLD_MS);
 }
 
+/**
+ * A click pokes; a double-click instead brings back whatever app you
+ * were using before you clicked the character (Claude Code has no one
+ * "window" to target, since it might be Terminal, iTerm, VS Code, or
+ * the Claude desktop app). The single-click poke is held back briefly
+ * so a second click can cancel it rather than firing both.
+ */
+const DOUBLE_CLICK_MS = 300;
+let clickTimer = null;
+let pendingClicks = 0;
+
+function handleClick() {
+  pendingClicks += 1;
+  if (pendingClicks === 1) {
+    clickTimer = setTimeout(() => {
+      pendingClicks = 0;
+      clickTimer = null;
+      handlePoke();
+    }, DOUBLE_CLICK_MS);
+    return;
+  }
+  clearTimeout(clickTimer);
+  clickTimer = null;
+  pendingClicks = 0;
+  window.sidekick.bringForward();
+}
+
 let greetRevertTimer = null;
 function handleGreet() {
   setState('greet');
@@ -111,7 +138,7 @@ window.addEventListener('mousemove', (event) => {
 window.addEventListener('mouseup', () => {
   if (!dragState) return;
   if (!dragState.moved) {
-    handlePoke();
+    handleClick();
   }
   window.sidekick.dragEnd();
   dragState = null;

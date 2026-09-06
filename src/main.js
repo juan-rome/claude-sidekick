@@ -5,6 +5,7 @@ const store = require('./lib/store');
 const { startHookServer, DEFAULT_PORT } = require('./lib/hookServer');
 const { REACTION_HOLD_MS } = require('./lib/hookState');
 const { areHooksInstalled, installHooks, uninstallHooks, settingsPath } = require('./lib/hooksInstaller');
+const { activateApp, startTrackingFrontmostApp } = require('./lib/frontmostApp');
 
 let tray;
 let sidekickWindow;
@@ -12,6 +13,7 @@ let galleryWindow;
 let hookServer;
 let dragOrigin = null;
 let hooksReady = false;
+let frontmostAppTracker = null;
 
 const WINDOW_SIZE = 160;
 const CHARACTERS = [
@@ -158,7 +160,16 @@ function buildSettingsSubmenu() {
       { type: 'separator' },
       { label: 'Reset Window Position', click: resetWindowPosition },
       { type: 'separator' },
-      { label: 'Uninstall Hooks...', click: runUninstallHooks }
+      { label: 'Uninstall Hooks...', click: runUninstallHooks },
+      { type: 'separator' },
+      {
+        label: 'Note: one Claude Code session at a time',
+        enabled: false,
+        toolTip:
+          'Sidekick has a single hook server and a single character state. ' +
+          'Running two Claude Code sessions at once means both drive the ' +
+          'same character, so events from one can interrupt the other.',
+      }
     );
   }
 
@@ -257,6 +268,17 @@ function resetWindowPosition() {
 }
 
 /**
+ * Double-clicking the character brings back whatever you were using
+ * before you clicked it, rather than any specific app: Claude Code runs
+ * inside Terminal, iTerm, VS Code, the Claude desktop app, or others,
+ * and there's no one "the Claude window" to target directly.
+ */
+function bringPreviousAppForward() {
+  if (!frontmostAppTracker) return;
+  activateApp(frontmostAppTracker.getLastOtherApp());
+}
+
+/**
  * The reverse of "Install Hooks to Get Started": confirmed first, since
  * unlike installing, this removes something the user asked for rather
  * than adding it. Re-gates the window afterward, symmetric with how it
@@ -338,12 +360,16 @@ ipcMain.on('sidekick:drag-end', () => {
   }
 });
 
+ipcMain.on('sidekick:bring-forward', bringPreviousAppForward);
+
 app.whenReady().then(() => {
   hooksReady = areHooksInstalled();
   if (hooksReady) {
     createSidekickWindow();
   }
   createTray();
+
+  frontmostAppTracker = startTrackingFrontmostApp({ appGetName: app.getName() });
 
   hookServer = startHookServer({
     port: DEFAULT_PORT,
@@ -362,4 +388,5 @@ app.on('window-all-closed', (event) => {
 
 app.on('before-quit', () => {
   if (hookServer) hookServer.close();
+  if (frontmostAppTracker) frontmostAppTracker.stop();
 });

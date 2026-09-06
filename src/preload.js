@@ -13,4 +13,5 @@ contextBridge.exposeInMainWorld('sidekick', {
   dragStart: () => ipcRenderer.send('sidekick:drag-start'),
   dragMove: (dx, dy) => ipcRenderer.send('sidekick:drag-move', dx, dy),
   dragEnd: () => ipcRenderer.send('sidekick:drag-end'),
+  bringForward: () => ipcRenderer.send('sidekick:bring-forward'),
 });
