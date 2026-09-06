@@ -4,7 +4,7 @@ const fs = require('fs');
 const store = require('./lib/store');
 const { startHookServer, DEFAULT_PORT } = require('./lib/hookServer');
 const { REACTION_HOLD_MS } = require('./lib/hookState');
-const { areHooksInstalled, installHooks, settingsPath } = require('./lib/hooksInstaller');
+const { areHooksInstalled, installHooks, uninstallHooks, settingsPath } = require('./lib/hooksInstaller');
 
 let tray;
 let sidekickWindow;
@@ -24,6 +24,16 @@ const CHARACTERS = [
 
 function getCharacter() {
   return store.get('character') || 'blob';
+}
+
+// Both default to on: store.get returns undefined for a key that's
+// never been set, and undefined !== false is true.
+function getShowBubbles() {
+  return store.get('showBubbles') !== false;
+}
+
+function getAlwaysOnTop() {
+  return store.get('alwaysOnTop') !== false;
 }
 
 function setCharacter(character) {
@@ -73,7 +83,7 @@ function createSidekickWindow() {
     movable: true,
     fullscreenable: false,
     skipTaskbar: true,
-    alwaysOnTop: true,
+    alwaysOnTop: getAlwaysOnTop(),
     hasShadow: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -85,6 +95,7 @@ function createSidekickWindow() {
 
   sidekickWindow.webContents.on('did-finish-load', () => {
     sidekickWindow.webContents.send('sidekick:character', getCharacter());
+    sidekickWindow.webContents.send('sidekick:showBubbles', getShowBubbles());
     setTimeout(wave, 600);
   });
 }
@@ -115,6 +126,45 @@ function openGalleryWindow() {
   });
 }
 
+/**
+ * Launch at Login always applies, hooks installed or not. The rest only
+ * mean anything once there's a real sidekick window to affect, so they
+ * only show up once hooksReady.
+ */
+function buildSettingsSubmenu() {
+  const items = [
+    {
+      label: 'Launch at Login',
+      type: 'checkbox',
+      checked: app.getLoginItemSettings().openAtLogin,
+      click: toggleLaunchAtLogin,
+    },
+  ];
+
+  if (hooksReady) {
+    items.push(
+      {
+        label: 'Speech Bubbles',
+        type: 'checkbox',
+        checked: getShowBubbles(),
+        click: toggleShowBubbles,
+      },
+      {
+        label: 'Always on Top',
+        type: 'checkbox',
+        checked: getAlwaysOnTop(),
+        click: toggleAlwaysOnTop,
+      },
+      { type: 'separator' },
+      { label: 'Reset Window Position', click: resetWindowPosition },
+      { type: 'separator' },
+      { label: 'Uninstall Hooks...', click: runUninstallHooks }
+    );
+  }
+
+  return items;
+}
+
 function createTray() {
   if (!tray) {
     const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', 'tray-icon.png'));
@@ -133,6 +183,7 @@ function createTray() {
         { label: 'Install Hooks to Get Started', click: runInstallHooks },
         { type: 'separator' },
         { label: 'Character Viewer...', click: openGalleryWindow },
+        { label: 'Settings', submenu: buildSettingsSubmenu() },
         { type: 'separator' },
         { label: 'Quit Claude Sidekick', click: () => app.quit() },
       ])
@@ -159,6 +210,7 @@ function createTray() {
         })),
       },
       { label: 'Character Viewer...', click: openGalleryWindow },
+      { label: 'Settings', submenu: buildSettingsSubmenu() },
       { type: 'separator' },
       { label: 'Quit Claude Sidekick', click: () => app.quit() },
     ])
@@ -171,6 +223,65 @@ function toggleVisibility() {
   } else {
     sidekickWindow.show();
   }
+}
+
+function toggleLaunchAtLogin() {
+  const current = app.getLoginItemSettings().openAtLogin;
+  app.setLoginItemSettings({ openAtLogin: !current });
+  createTray();
+}
+
+function toggleShowBubbles() {
+  const next = !getShowBubbles();
+  store.set('showBubbles', next);
+  if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+    sidekickWindow.webContents.send('sidekick:showBubbles', next);
+  }
+  createTray();
+}
+
+function toggleAlwaysOnTop() {
+  const next = !getAlwaysOnTop();
+  store.set('alwaysOnTop', next);
+  if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+    sidekickWindow.setAlwaysOnTop(next);
+  }
+  createTray();
+}
+
+function resetWindowPosition() {
+  if (!sidekickWindow || sidekickWindow.isDestroyed()) return;
+  const { x, y } = defaultPosition();
+  sidekickWindow.setPosition(x, y);
+  store.set('windowPosition', { x, y });
+}
+
+/**
+ * The reverse of "Install Hooks to Get Started": confirmed first, since
+ * unlike installing, this removes something the user asked for rather
+ * than adding it. Re-gates the window afterward, symmetric with how it
+ * stays hidden until hooks are installed in the first place.
+ */
+function runUninstallHooks() {
+  dialog
+    .showMessageBox({
+      type: 'question',
+      title: 'Claude Sidekick',
+      message: 'Uninstall Sidekick\'s hooks?',
+      detail: `This removes Sidekick's entries from ${settingsPath()} (a .bak copy is written first) and hides the character until they're installed again. Anything else you've configured there is left untouched.`,
+      buttons: ['Cancel', 'Uninstall'],
+      defaultId: 0,
+      cancelId: 0,
+    })
+    .then(({ response }) => {
+      if (response !== 1) return;
+      uninstallHooks();
+      hooksReady = false;
+      if (sidekickWindow && !sidekickWindow.isDestroyed()) {
+        sidekickWindow.close();
+      }
+      createTray();
+    });
 }
 
 /**
@@ -199,7 +310,7 @@ function runInstallHooks() {
   } catch (err) {
     dialog.showErrorBox(
       'Could not install hooks',
-      `${err.message}\n\nYou can add them yourself in ${settingsPath()} instead — see the README.`
+      `${err.message}\n\nYou can add them yourself in ${settingsPath()} instead, see the README.`
     );
   }
 }

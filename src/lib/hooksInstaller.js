@@ -83,4 +83,39 @@ function installHooks(filePath = settingsPath()) {
   return changed;
 }
 
-module.exports = { HOOK_URL, areHooksInstalled, installHooks, settingsPath };
+/**
+ * The reverse of installHooks: removes exactly the groups install added
+ * (a group counts as "ours" only if every hook in it points at our URL,
+ * matching how installHooks always creates a group containing nothing
+ * else), leaving everything the user configured separately untouched.
+ * Also writes a .bak copy first, same as install.
+ */
+function uninstallHooks(filePath = settingsPath()) {
+  if (!fs.existsSync(filePath)) return false;
+
+  const settings = readSettings(filePath);
+  fs.copyFileSync(filePath, `${filePath}.bak`);
+
+  const hooks = settings.hooks || {};
+  let changed = false;
+
+  for (const { name } of HOOK_EVENTS) {
+    const groups = Array.isArray(hooks[name]) ? hooks[name] : [];
+    const remaining = groups.filter((group) => !groupHasOurHook(group));
+    if (remaining.length !== groups.length) {
+      changed = true;
+      if (remaining.length > 0) {
+        hooks[name] = remaining;
+      } else {
+        delete hooks[name];
+      }
+    }
+  }
+
+  if (changed) {
+    fs.writeFileSync(filePath, JSON.stringify(settings, null, 2));
+  }
+  return changed;
+}
+
+module.exports = { HOOK_URL, areHooksInstalled, installHooks, uninstallHooks, settingsPath };

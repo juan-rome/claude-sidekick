@@ -41,7 +41,7 @@ maps incoming hook events to an animation state:
 
 `PostToolUse` fires after *every* successful tool call, dozens of times
 a turn, so it folds into `working` rather than triggering its own
-celebration each time — `Stop`, which fires once when Claude actually
+celebration each time. `Stop`, which fires once when Claude actually
 finishes responding, is the real "done" moment. `Notification` covers
 permission prompts, idle timeouts, and MCP dialogs; Sidekick only reacts
 to the subtypes that actually mean "waiting on you" (not things like
@@ -49,7 +49,7 @@ to the subtypes that actually mean "waiting on you" (not things like
 
 Reactive states (everything but idle/working) automatically settle back
 to idle a couple of seconds after firing, so the character never gets
-stuck mid-reaction — except question, which holds until a real event
+stuck mid-reaction, except question, which holds until a real event
 replaces it, since "waiting on you" can last a lot longer than a
 couple of seconds.
 
@@ -84,8 +84,8 @@ npm install
 npm start
 ```
 
-Sidekick stays invisible until it's actually wired up to Claude Code —
-an unhooked character would just sit there doing nothing. A menu bar
+Sidekick stays invisible until it's actually wired up to Claude Code,
+since an unhooked character would just sit there doing nothing. A menu bar
 icon appears with one item: **Install Hooks to Get Started**. Click it
 and Sidekick merges its hook config into `~/.claude/settings.json` for
 you (a `.bak` copy of the file is written first) and shows the character
@@ -94,11 +94,26 @@ anywhere you like). Restart any Claude Code session that was already
 running so it picks up the new hooks.
 
 Once installed, the menu bar icon switches to the full menu: show/hide
-the character, switch characters, or quit.
+the character, switch characters, open the Character Viewer, or adjust
+Settings:
+
+- **Launch at Login**: starts Sidekick automatically when you log into
+  your Mac (this is about your Mac's login, not any Claude account;
+  Sidekick doesn't authenticate with anything, see "How it works" above).
+- **Speech Bubbles**: turn the "Hi!"/"Bye!"/etc. reaction lines off if
+  you'd rather the character react silently.
+- **Always on Top**: turn off if you don't want it floating above every
+  other window.
+- **Reset Window Position**: snaps it back to the bottom-right corner,
+  useful if it's been dragged off-screen or a display got unplugged.
+- **Uninstall Hooks...**: the reverse of installing. Removes Sidekick's
+  entries from `~/.claude/settings.json` (a `.bak` copy is written
+  first) and hides the character again, without touching anything else
+  you've configured there.
 
 If you installed Sidekick before the `Notification` hook (the "waiting
 on you" question state) was added, click **Install Hooks to Get
-Started** again — it's a no-op for events you already have and just
+Started** again; it's a no-op for events you already have and just
 adds the one that's missing.
 
 ### Setting hooks up by hand
@@ -156,7 +171,7 @@ npm test
 ## What's next
 
 - More characters.
-- More WebGPU effects (a glow/aura, a particle trail while working) —
+- More WebGPU effects (a glow/aura, a particle trail while working):
   the full 3D-model route (replacing the SVG art with rigged 3D
   characters) was scoped and set aside as its own separate undertaking,
   comparable in size to the Live2D path below; what shipped instead is

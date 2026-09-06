@@ -85,7 +85,7 @@ function buildEyes() {
   const eyeGeometry = new THREE.CircleGeometry(3.2, 16);
   // transparent:true (even at full opacity) puts these in the same
   // back-to-front render pass as the translucent bell instead of the
-  // opaque pass, which runs *before* transparent objects — without this,
+  // opaque pass, which runs *before* transparent objects: without this,
   // the bell painted over the eyes afterward and washed them out.
   const eyeMaterial = new THREE.MeshBasicMaterial({
     color: 0x2a1c3a,

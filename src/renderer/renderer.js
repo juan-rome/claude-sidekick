@@ -34,8 +34,10 @@ const BUBBLE_TEXT = {
   poke: 'Hehe!',
 };
 
+let bubblesEnabled = true;
+
 function updateBubble(state) {
-  const text = BUBBLE_TEXT[state];
+  const text = bubblesEnabled ? BUBBLE_TEXT[state] : null;
   if (text) {
     bubbleText.textContent = text;
     speechBubble.classList.add('visible');
@@ -165,3 +167,7 @@ stage.addEventListener('mouseleave', () => setGadgetLook(0, 0));
 
 window.sidekick.onState(setState);
 window.sidekick.onCharacter(setCharacter);
+window.sidekick.onShowBubbles((show) => {
+  bubblesEnabled = show;
+  updateBubble(currentState);
+});
