@@ -25,6 +25,9 @@
       "icon": "src/assets/app-icon.icns",
       "identity": null
     },
+    "dmg": {
+      "icon": "src/assets/app-icon.icns"
+    },
     "files": [
       "src/**/*",
       "package.json"
