@@ -95,6 +95,18 @@ function createSidekickWindow() {
   sidekickWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   sidekickWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
+  // Renderer console output doesn't otherwise reach the main process's
+  // own stdout, so a failed import or a WebGPU init error in the
+  // character scripts would be invisible when the app isn't launched
+  // from a terminal. Forwarding it here is the only way to see what's
+  // actually happening in a packaged build.
+  sidekickWindow.webContents.on('console-message', (_event, _level, message, line, sourceId) => {
+    console.log(`[renderer] ${message} (${sourceId}:${line})`);
+  });
+  sidekickWindow.webContents.on('did-fail-load', (_event, code, description) => {
+    console.error('[renderer] did-fail-load:', code, description);
+  });
+
   sidekickWindow.webContents.on('did-finish-load', () => {
     sidekickWindow.webContents.send('sidekick:character', getCharacter());
     sidekickWindow.webContents.send('sidekick:showBubbles', getShowBubbles());

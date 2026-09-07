@@ -7,7 +7,7 @@
  * cursor while idle.
  */
 import * as THREE from '../../node_modules/three/build/three.webgpu.js';
-import { RoundedBoxGeometry } from '../../node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { RoundedBoxGeometry } from './vendor/RoundedBoxGeometry.js';
 
 const SIZE = 160;
 // Fills more of the frame while staying well inside the camera's visible
