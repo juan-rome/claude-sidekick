@@ -18,6 +18,7 @@
   "build": {
     "appId": "com.juanrome.claudesidekick",
     "productName": "Claude Sidekick",
+    "asar": false,
     "mac": {
       "target": "dmg",
       "category": "public.app-category.developer-tools",

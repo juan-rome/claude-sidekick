@@ -54,6 +54,14 @@ function startHookServer({ port = DEFAULT_PORT, onState } = {}) {
     });
   });
 
+  // An unhandled 'error' event on an http.Server throws and crashes the
+  // whole main process; a stale dev instance still holding the port
+  // (or any other bind failure) would otherwise take Sidekick down
+  // silently before its window ever gets a chance to show.
+  server.on('error', (err) => {
+    console.error('[hookServer] failed to start:', err.message);
+  });
+
   server.listen(port, '127.0.0.1');
 
   return {
